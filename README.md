@@ -1,6 +1,6 @@
-#CDT-test
+# CDT-test
 
-##Setup
+## Setup
 
 This project is a test case of [CDT-plusplus] using [vcpkg]. To get started:
 
@@ -19,6 +19,8 @@ Now, we need to install prerequisites [eigen3], [CGAL], [curl], and [date]:
 ```bash
 ./vcpkg install curl
 ./vcpkg install date
+./vcpkg install eigen
+./vcpkg install tbb
 ./vcpkg install
 
 ```

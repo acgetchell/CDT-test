@@ -7,6 +7,12 @@ set(BOOST_MIN_VERSION "1.64.0")
 #Compile commands for ClangTidy et. al
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+###############
+##  OPTIONS  ##
+###############
+
+#Turn on / off TBB
+set(TBB_ON FALSE)
 
 #Threads
 set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
@@ -29,8 +35,12 @@ add_compile_options(-Wall -Wno-comment)
 #Easier navigation in an IDE when projects are organized in folders.
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
+###############
+##  Project  ##
+###############
+
 #Vcpkg
-set(CMAKE_TOOLCHAIN_FILE "/Users/adam/vcpkg/scripts/buildsystems/vcpkg.cmake")
+set(CMAKE_TOOLCHAIN_FILE "${PROJECT_SOURCE_DIR}/../vcpkg/scripts/buildsystems/vcpkg.cmake")
 
 #Boost
 set(Boost_USE_STATIC_LIBS OFF)
@@ -57,13 +67,6 @@ if(CGAL_FOUND)
         list(APPEND CGAL_3RD_PARTY_LIBRARIES ${TBB_LIBRARIES})
         MESSAGE(${TBB_LIBRARIES})
     endif()
-    #Eigen
-#    find_package(Eigen3 CONFIG REQUIRED)
-#    if(EIGEN3_FOUND)
-#        include(${EIGEN3_USE_FILE})
-#    else()
-#        message(FATAL_ERROR "Notice: This program requires the Eigen3 library, and will not be compiled.")
-#    endif()
 else()
     message(FATAL_ERROR "Notice: This program requires the CGAL library, and will not be compiled.")
 endif()

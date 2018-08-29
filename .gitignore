@@ -26,3 +26,10 @@
 *.exe
 *.out
 *.app
+
+# IDE
+.idea/
+cmake-build-debug/
+
+# MacOS
+.DS_Store

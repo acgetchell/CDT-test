@@ -14,18 +14,18 @@ sudo ./vcpkg integrate install
 
 Note that this helpfully installs up to date versions of [CMake] and [Ninja].
 
-Now, we need to install prerequisites [eigen3], [CGAL], [curl], and [date]:
+Now, we need to install prerequisites [curl], [date], [eigen3], [tbb], and [CGAL] :
 
 ```bash
 ./vcpkg install curl
 ./vcpkg install date
 ./vcpkg install eigen
 ./vcpkg install tbb
-./vcpkg install
+./vcpkg install cgal
 
 ```
 
-This is building from source, so it may take awhile.
+This builds from source, so it may take awhile.
 
 
 [CDT-plusplus]:https://github.com/acgetchell/CDT-plusplus
@@ -36,3 +36,4 @@ This is building from source, so it may take awhile.
 [curl]: https://curl.haxx.se/libcurl/
 [date]: https://github.com/HowardHinnant/date
 [eigen3]: https://eigen.tuxfamily.org/dox/
+[tbb]: https://www.threadingbuildingblocks.org/

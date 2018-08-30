@@ -39,9 +39,17 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 ##  Project  ##
 ###############
 
-#Vcpkg
-set(CMAKE_TOOLCHAIN_FILE "${PROJECT_SOURCE_DIR}/../vcpkg/scripts/buildsystems/vcpkg.cmake")
+#Curl
+find_package(CURL REQUIRED)
 
+#Date
+find_package(unofficial-date CONFIG REQUIRED)
+
+find_package(BOOST REQUIRED)
+
+find_package(Eigen3 CONFIG REQUIRED)
+#TBB
+find_package(TBB CONFIG REQUIRED)
 
 ##CGAL
 #find_package(CGAL QUIET COMPONENTS Core )
@@ -55,20 +63,9 @@ set(CMAKE_TOOLCHAIN_FILE "${PROJECT_SOURCE_DIR}/../vcpkg/scripts/buildsystems/vc
 #    message(FATAL_ERROR "Notice: This program requires the CGAL library, and will not be compiled.")
 #endif()
 
-#Curl
-find_package(CURL REQUIRED)
-
-#Date
-#find_package(unofficial-date CONFIG REQUIRED)
-
-find_package(BOOST REQUIRED)
-
-#TBB
-find_package(TBB CONFIG REQUIRED)
-
 
 include_directories(BEFORE ${PROJECT_SOURCE_DIR}/include)
 add_executable(cdt-opt ${PROJECT_SOURCE_DIR}/src/cdt-opt.cpp)
-target_link_libraries(cdt-opt PRIVATE ${CURL_LIBRARIES})
-target_include_directories(cdt-opt PRIVATE ${CURL_INCLUDE_DIRS} BOOST::boost TBB::tbb)
+target_link_libraries(cdt-opt PRIVATE ${CURL_LIBRARIES} unofficial::date::tz unofficial::date::date BOOST::boost Eigen3::Eigen TBB::tbb)
+target_include_directories(cdt-opt PRIVATE ${CURL_INCLUDE_DIRS})
 target_compile_features(cdt-opt PRIVATE cxx_std_17)

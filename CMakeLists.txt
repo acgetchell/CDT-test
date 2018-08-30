@@ -42,27 +42,18 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 #Vcpkg
 set(CMAKE_TOOLCHAIN_FILE "${PROJECT_SOURCE_DIR}/../vcpkg/scripts/buildsystems/vcpkg.cmake")
 
-#Boost
-set(Boost_USE_STATIC_LIBS OFF)
-set(Boost_USE_MULTITHREAD ON)
-find_package(Boost ${BOOST_MIN_VERSION} REQUIRED)
-if (Boost_FOUND)
-    include_directories(${Boost_INCLUDE_DIR})
-else()
-    message(FATAL_ERROR "Boost >= ${BOOST_MIN_VERSION} required.\n")
-endif ()
 
-#CGAL
-find_package(CGAL QUIET COMPONENTS Core )
-if(CGAL_FOUND)
-    #Don't let CGAL override flags
-    set(CGAL_DONT_OVERRIDE_CMAKE_FLAGS TRUE CACHE BOOL "Force CGAL to maintain CMAKE flags")
-    set(CGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE TRUE)
-    include(${CGAL_USE_FILE})
-    include(CGAL_CreateSingleSourceCGALProgram)
-else()
-    message(FATAL_ERROR "Notice: This program requires the CGAL library, and will not be compiled.")
-endif()
+##CGAL
+#find_package(CGAL QUIET COMPONENTS Core )
+#if(CGAL_FOUND)
+#    #Don't let CGAL override flags
+#    set(CGAL_DONT_OVERRIDE_CMAKE_FLAGS TRUE CACHE BOOL "Force CGAL to maintain CMAKE flags")
+#    set(CGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE TRUE)
+#    include(${CGAL_USE_FILE})
+#    include(CGAL_CreateSingleSourceCGALProgram)
+#else()
+#    message(FATAL_ERROR "Notice: This program requires the CGAL library, and will not be compiled.")
+#endif()
 
 #Curl
 find_package(CURL REQUIRED)
@@ -70,12 +61,14 @@ find_package(CURL REQUIRED)
 #Date
 #find_package(unofficial-date CONFIG REQUIRED)
 
+find_package(BOOST REQUIRED)
+
 #TBB
 find_package(TBB CONFIG REQUIRED)
 
 
 include_directories(BEFORE ${PROJECT_SOURCE_DIR}/include)
 add_executable(cdt-opt ${PROJECT_SOURCE_DIR}/src/cdt-opt.cpp)
-target_link_libraries(cdt-opt PRIVATE ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${CURL_LIBRARIES} TBB::tbb)
-target_include_directories(cdt-opt PRIVATE ${CURL_INCLUDE_DIRS})
+target_link_libraries(cdt-opt PRIVATE ${CURL_LIBRARIES})
+target_include_directories(cdt-opt PRIVATE ${CURL_INCLUDE_DIRS} BOOST::boost TBB::tbb)
 target_compile_features(cdt-opt PRIVATE cxx_std_17)

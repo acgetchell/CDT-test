@@ -14,12 +14,13 @@ sudo ./vcpkg integrate install
 
 Note that this helpfully installs up to date versions of [CMake] and [Ninja].
 
-Now, we need to install prerequisites [curl], [date], [eigen3], [tbb], and [CGAL] :
+Now, we need to install prerequisites [curl], [date], [boost], [eigen3], [tbb], and [CGAL] :
 
 ```bash
 ./vcpkg install curl
 ./vcpkg install date
-./vcpkg install eigen
+./vcpkg install boost
+./vcpkg install eigen3
 ./vcpkg install tbb
 ./vcpkg install cgal
 
@@ -44,3 +45,4 @@ This builds from source, so it may take awhile. To use these successfully, you'l
 [eigen3]: https://eigen.tuxfamily.org/dox/
 [tbb]: https://www.threadingbuildingblocks.org/
 [CLion]: https://www.jetbrains.com/clion/
+[boost]: https://www.boost.org/

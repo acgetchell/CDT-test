@@ -25,7 +25,13 @@ Now, we need to install prerequisites [curl], [date], [eigen3], [tbb], and [CGAL
 
 ```
 
-This builds from source, so it may take awhile.
+This builds from source, so it may take awhile. To use these successfully, you'll need to set the `CMAKE_TOOLCHAIN_FILE` option in your IDE or whatever invokes `CMake` to wherever you've installed `vcpkg`, for example:
+
+```bash
+-DCMAKE_TOOLCHAIN_FILE=/Users/adam/vcpkg/scripts/buildsystems/vcpkg.cmake
+```
+
+(I set it in [CLion].)
 
 
 [CDT-plusplus]:https://github.com/acgetchell/CDT-plusplus
@@ -37,3 +43,4 @@ This builds from source, so it may take awhile.
 [date]: https://github.com/HowardHinnant/date
 [eigen3]: https://eigen.tuxfamily.org/dox/
 [tbb]: https://www.threadingbuildingblocks.org/
+[CLion]: https://www.jetbrains.com/clion/

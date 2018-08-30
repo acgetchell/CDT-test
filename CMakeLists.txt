@@ -71,18 +71,18 @@ else()
     message(FATAL_ERROR "Notice: This program requires the CGAL library, and will not be compiled.")
 endif()
 
-#Eigen
-find_package(Eigen3 REQUIRED)
-
 #Curl
 find_package(CURL REQUIRED)
 
 #Date
-find_package(unofficial-date CONFIG REQUIRED)
+#find_package(unofficial-date CONFIG REQUIRED)
+
+#TBB
+find_package(TBB CONFIG REQUIRED)
 
 
 include_directories(BEFORE ${PROJECT_SOURCE_DIR}/include)
 add_executable(cdt-opt ${PROJECT_SOURCE_DIR}/src/cdt-opt.cpp)
-target_link_libraries(cdt-opt PRIVATE ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${CURL_LIBRARIES} unofficial::date::tz unofficial::date::date Eigen3::Eigen)
+target_link_libraries(cdt-opt PRIVATE ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${CURL_LIBRARIES} TBB::tbb)
 target_include_directories(cdt-opt PRIVATE ${CURL_INCLUDE_DIRS})
 target_compile_features(cdt-opt PRIVATE cxx_std_17)

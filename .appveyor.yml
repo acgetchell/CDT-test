@@ -59,6 +59,8 @@ install:
   - vcpkg install eigen3
   - vcpkg install tbb
   - vcpkg install cgal
+  # Install curl
+  - choco install curl
 
 before_build:
   - cd c:\projects\cdt-test

@@ -12,10 +12,14 @@ clone_folder: c:\projects\cdt-test
 
 shallow_clone: true
 
+cache: c:\tools\vcpkg\installed\
+
+
 install:
   - cd c:\tools\vcpkg
   - vcpkg integrate install
   - git pull
+  - vcpkg update
   - vcpkg install curl
   - vcpkg install date
   - vcpkg install boost

@@ -1,5 +1,7 @@
 # CDT-test
 
+[![Windows Build status](https://img.shields.io/appveyor/ci/acgetchell/cdt-test.svg?label=Windows)](https://ci.appveyor.com/project/acgetchell/cdt-test)
+
 ## Setup
 
 This project is a test case of [CDT-plusplus] using [vcpkg]. To get started:

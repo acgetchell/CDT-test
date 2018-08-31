@@ -52,20 +52,20 @@ find_package(Eigen3 CONFIG REQUIRED)
 find_package(TBB CONFIG REQUIRED)
 
 ##CGAL
-#find_package(CGAL QUIET COMPONENTS Core )
-#if(CGAL_FOUND)
-#    #Don't let CGAL override flags
-#    set(CGAL_DONT_OVERRIDE_CMAKE_FLAGS TRUE CACHE BOOL "Force CGAL to maintain CMAKE flags")
-#    set(CGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE TRUE)
-#    include(${CGAL_USE_FILE})
-#    include(CGAL_CreateSingleSourceCGALProgram)
-#else()
-#    message(FATAL_ERROR "Notice: This program requires the CGAL library, and will not be compiled.")
-#endif()
+find_package(CGAL CONFIG REQUIRED)
+if(CGAL_FOUND)
+    #Don't let CGAL override flags
+    set(CGAL_DONT_OVERRIDE_CMAKE_FLAGS TRUE CACHE BOOL "Force CGAL to maintain CMAKE flags")
+    set(CGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE TRUE)
+    include(${CGAL_USE_FILE})
+    include(CGAL_CreateSingleSourceCGALProgram)
+else()
+    message(FATAL_ERROR "Notice: This program requires the CGAL library, and will not be compiled.")
+endif()
 
 
 include_directories(BEFORE ${PROJECT_SOURCE_DIR}/include)
 add_executable(cdt-opt ${PROJECT_SOURCE_DIR}/src/cdt-opt.cpp)
-target_link_libraries(cdt-opt PRIVATE ${CURL_LIBRARIES} unofficial::date::tz unofficial::date::date Eigen3::Eigen TBB::tbb)
+target_link_libraries(cdt-opt PRIVATE ${CURL_LIBRARIES} unofficial::date::tz unofficial::date::date Eigen3::Eigen TBB::tbb CGAL::CGAL CGAL::CGAL_Core)
 target_include_directories(cdt-opt PRIVATE ${CURL_INCLUDE_DIRS})
 target_compile_features(cdt-opt PRIVATE cxx_std_17)

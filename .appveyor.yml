@@ -34,7 +34,7 @@ install:
   - 7z x ninja.zip -oC:\projects\dev\ninja > nul
   - set PATH=%PATH%;C:\projects\dev\ninja
   - ninja --version
-  - set CMAKE_MAKE_PROGRAM=C:\projects\dev\ninja\ninja.exe
+#  - set CMAKE_MAKE_PROGRAM=C:\projects\dev\ninja\ninja.exe
   # Verify CMake
   - cmake --version
   # Update vcpkg
@@ -59,7 +59,7 @@ before_build:
 build_script:
   - mkdir build
   - cd build
-  - cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake ..
+  - cmake -G Ninja -DCMAKE_MAKE_PROGRAM=c:\projects\dev\ninja\ninja.exe -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake ..
   - cmake --build .
 
 notifications:

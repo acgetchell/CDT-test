@@ -38,12 +38,12 @@ install:
   # Verify CMake
   - cmake --version
   # Setup Clang-cl
-  - set PATH=%PATH%;"C:\Program Files\LLVM\bin"
-  - clang-cl -v
-  - set CC=clang-cl
-  - set CXX=clang-cl
-  - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
-  - set CMAKE_CXX_COMPILER="C:\Program Files\LLVM\bin\clang-cl"
+#  - set PATH=%PATH%;"C:\Program Files\LLVM\bin"
+#  - clang-cl -v
+#  - set CC=clang-cl
+#  - set CXX=clang-cl
+#  - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
+#  - set CMAKE_CXX_COMPILER="C:\Program Files\LLVM\bin\clang-cl"
   # Update vcpkg
   - cd c:\tools\vcpkg
   - vcpkg integrate install
@@ -61,12 +61,12 @@ install:
   - vcpkg install cgal
   # Install curl
   # Use installed conda
-  - set PATH=%PATH%;C:\Miniconda-x64\Scripts
-  - conda update conda -y
-  - conda list
-  - conda create --name py36 python=3.6 -y
-  - activate py36
-  - conda install -c conda-forge curl -y
+#  - set PATH=%PATH%;C:\Miniconda-x64\Scripts
+#  - conda update conda -y
+#  - conda list
+#  - conda create --name py36 python=3.6 -y
+#  - activate py36
+#  - conda install -c conda-forge curl -y
 
 
 before_build:
@@ -75,7 +75,7 @@ before_build:
 build_script:
   - mkdir build
   - cd build
-  - cmake -G Ninja -DCMAKE_MAKE_PROGRAM=c:\projects\dev\ninja\ninja.exe -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake ..
+  - cmake -G Ninja -DCMAKE_MAKE_PROGRAM=c:\projects\dev\ninja\ninja.exe -DVCPKG_TARGET_TRIPLET=x64-windows-static -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake ..
   - cmake --build .
 
 notifications:

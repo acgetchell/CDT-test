@@ -1,0 +1,41 @@
+version: 0.1.{build}
+
+skip_tags: true
+
+skip_branch_with_pr: true
+
+image:
+    - Visual Studio 2015
+    - Visual Studio 2017
+
+clone_folder: c:\projects\cdt-test
+
+shallow_clone: true
+
+install:
+  - cd c:\tools\vcpkg
+  - vcpkg integrate install
+  - git pull
+  - vcpkg install curl
+  - vcpkg install date
+  - vcpkg install boost
+  - vcpkg install eigen3
+  - vcpkg install tbb
+  - vcpkg install cgal
+
+before_build:
+  - cd c:\projects\cdt-test
+
+build_script:
+  - mkdir build
+  - cd build
+  - cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake ..
+  - cmake --build .
+
+notifications:
+  - provider: Email
+    to:
+      - acgetchell@ucdavis.edu
+
+#on_finish:
+#  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))

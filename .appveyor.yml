@@ -60,7 +60,14 @@ install:
   - vcpkg install tbb
   - vcpkg install cgal
   # Install curl
-  - choco install curl
+  # Use installed conda
+  - set PATH=%PATH%;C:\Miniconda-x64\Scripts
+  - conda update conda -y
+  - conda list
+  - conda create --name py36 python=3.6 -y
+  - activate py36
+  - conda install -c conda-forge curl -y
+
 
 before_build:
   - cd c:\projects\cdt-test

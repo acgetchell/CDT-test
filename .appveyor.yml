@@ -1,25 +1,48 @@
 version: 0.1.{build}
 
+platform:
+  - x64
+
+cache:
+  - c:\tools\vcpkg\installed\
+  - c:\projects\dev
+
+
+image:
+  - Visual Studio 2015
+  - Visual Studio 2017
+
 skip_tags: true
 
 skip_branch_with_pr: true
 
-image:
-    - Visual Studio 2015
-    - Visual Studio 2017
+build:
+  verbosity: detailed
 
 clone_folder: c:\projects\cdt-test
 
 shallow_clone: true
 
-cache: c:\tools\vcpkg\installed\
-
+configuration: Release
 
 install:
+  - mkdir c:\projects\dev
+  - cd c:\projects\dev
+  # Install Ninja
+  - set NINJA_URL="https://github.com/ninja-build/ninja/releases/download/v1.8.2/ninja-win.zip"
+  - appveyor DownloadFile %NINJA_URL% -FileName ninja.zip
+  - 7z x ninja.zip -oC:\projects\dev\ninja > nul
+  - set PATH=%PATH%;C:\projects\dev\ninja
+  - ninja --version
+  - set CMAKE_MAKE_PROGRAM=C:\projects\dev\ninja\ninja.exe
+  # Verify CMake
+  - cmake --version
+  # Update vcpkg
   - cd c:\tools\vcpkg
   - vcpkg integrate install
   - git pull
   - vcpkg update
+  # Install required libraries
   - vcpkg install curl
   - vcpkg install date
   - vcpkg install boost

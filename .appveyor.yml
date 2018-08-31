@@ -37,6 +37,13 @@ install:
 #  - set CMAKE_MAKE_PROGRAM=C:\projects\dev\ninja\ninja.exe
   # Verify CMake
   - cmake --version
+  # Setup Clang-cl
+  - set PATH=%PATH%;"C:\Program Files\LLVM\bin"
+  - clang-cl -v
+  - set CC=clang-cl
+  - set CXX=clang-cl
+  - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
+  - set CMAKE_CXX_COMPILER="C:\Program Files\LLVM\bin\clang-cl"
   # Update vcpkg
   - cd c:\tools\vcpkg
   - vcpkg integrate install
@@ -67,5 +74,5 @@ notifications:
     to:
       - acgetchell@ucdavis.edu
 
-#on_finish:
-#  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+on_failure:
+  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))

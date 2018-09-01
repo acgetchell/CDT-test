@@ -5,10 +5,12 @@ platform:
 
 environment:
   APPVEYOR_SAVE_CACHE_ON_ERROR: true
+  VCPKG_DEFAULT_TRIPLET: x64-windows
+  VCPKG_BUILD_TYPE: release
 
 cache:
-  - c:\tools\vcpkg\installed\
-  - c:\tools\vcpkg\downloads\
+  - c:\tools\vcpkg\installed\ -> .appveyor.yml
+  - c:\tools\vcpkg\downloads\ -> .appveyor.yml
   - c:\projects\dev
 
 
@@ -37,7 +39,6 @@ install:
   - 7z x ninja.zip -oC:\projects\dev\ninja > nul
   - set PATH=%PATH%;C:\projects\dev\ninja
   - ninja --version
-#  - set CMAKE_MAKE_PROGRAM=C:\projects\dev\ninja\ninja.exe
   # Verify CMake
   - cmake --version
   # Setup Clang-cl
@@ -78,5 +79,5 @@ notifications:
     to:
       - acgetchell@ucdavis.edu
 
-on_failure:
-  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+#on_failure:
+#  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))

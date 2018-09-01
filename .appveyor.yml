@@ -39,12 +39,12 @@ install:
   # Verify CMake
   - cmake --version
   # Setup Clang-cl
-#  - set PATH=%PATH%;"C:\Program Files\LLVM\bin"
-#  - clang-cl -v
-#  - set CC=clang-cl
-#  - set CXX=clang-cl
-#  - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
-#  - set CMAKE_CXX_COMPILER="C:\Program Files\LLVM\bin\clang-cl"
+  - set PATH=%PATH%;"C:\Program Files\LLVM\bin"
+  - clang-cl -v
+  - set CC=clang-cl
+  - set CXX=clang-cl
+  - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
+  - set CMAKE_CXX_COMPILER="C:\Program Files\LLVM\bin\clang-cl"
   # Update vcpkg
   - cd c:\tools\vcpkg
   - vcpkg integrate install

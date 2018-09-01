@@ -3,6 +3,9 @@ version: 0.1.{build}
 platform:
   - x64
 
+environment:
+  APPVEYOR_SAVE_CACHE_ON_ERROR: true
+
 cache:
   - c:\tools\vcpkg\installed\
   - c:\tools\vcpkg\downloads\
@@ -11,7 +14,6 @@ cache:
 
 image:
   - Visual Studio 2015
-  - Visual Studio 2017
 
 skip_tags: true
 
@@ -43,7 +45,7 @@ install:
   - clang-cl -v
   - set CC=clang-cl
   - set CXX=clang-cl
-  - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
+  - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
   - set CMAKE_CXX_COMPILER="C:\Program Files\LLVM\bin\clang-cl"
   # Update vcpkg
   - cd c:\tools\vcpkg
@@ -60,14 +62,6 @@ install:
   - vcpkg install eigen3
   - vcpkg install tbb
   - vcpkg install cgal
-  # Install curl
-  # Use installed conda
-#  - set PATH=%PATH%;C:\Miniconda-x64\Scripts
-#  - conda update conda -y
-#  - conda list
-#  - conda create --name py36 python=3.6 -y
-#  - activate py36
-#  - conda install -c conda-forge curl -y
 
 
 before_build:
@@ -76,7 +70,7 @@ before_build:
 build_script:
   - mkdir build
   - cd build
-  - cmake -G Ninja -DCMAKE_MAKE_PROGRAM=c:\projects\dev\ninja\ninja.exe -DVCPKG_TARGET_TRIPLET=x86-windows -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake ..
+  - cmake -G Ninja -DCMAKE_MAKE_PROGRAM=c:\projects\dev\ninja\ninja.exe -DVCPKG_TARGET_TRIPLET=x64-windows -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake ..
   - cmake --build .
 
 notifications:

@@ -1,12 +1,11 @@
 version: 0.1.{build}
 
 platform:
-  - x64
+  - x86
 
 environment:
   APPVEYOR_SAVE_CACHE_ON_ERROR: true
-  VCPKG_DEFAULT_TRIPLET: x64-windows
-  VCPKG_BUILD_TYPE: release
+  VCPKG_DEFAULT_TRIPLET: x86-windows
 
 cache:
   - c:\tools\vcpkg\installed\ -> .appveyor.yml
@@ -46,7 +45,7 @@ install:
   - clang-cl -v
   - set CC=clang-cl
   - set CXX=clang-cl
-  - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
+  - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
   - set CMAKE_CXX_COMPILER="C:\Program Files\LLVM\bin\clang-cl"
   # Update vcpkg
   - cd c:\tools\vcpkg

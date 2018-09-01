@@ -9,7 +9,7 @@ environment:
 
 cache:
   - c:\tools\vcpkg\installed\ -> .appveyor.yml
-  - c:\tools\vcpkg\downloads\ -> .appveyor.yml
+  - c:\tools\vcpkg\downloads\
   - c:\projects\dev
 
 
@@ -46,7 +46,7 @@ install:
   - clang-cl -v
   - set CC=clang-cl
   - set CXX=clang-cl
-  - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
+  - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
   - set CMAKE_CXX_COMPILER="C:\Program Files\LLVM\bin\clang-cl"
   # Update vcpkg
   - cd c:\tools\vcpkg

@@ -59,7 +59,6 @@ install:
   # Install required libraries
   - vcpkg install curl
   - vcpkg install date
-  - vcpkg install boost
   - vcpkg install eigen3
   - vcpkg install tbb
   - vcpkg install cgal

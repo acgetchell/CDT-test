@@ -42,6 +42,8 @@ This builds from source, so it will take awhile. To use these successfully, you'
 
 N.B. As of 2018-09-04, the `vcpkg` formula for [CGAL] is [broken][1]. However, [homebrew] or [linuxbrew] can be used to install [CGAL] successfully.
 
+Possibly fixed now.
+
 
 [CDT-plusplus]:https://github.com/acgetchell/CDT-plusplus
 [vcpkg]:https://github.com/Microsoft/vcpkg

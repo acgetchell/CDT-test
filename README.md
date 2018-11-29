@@ -22,7 +22,7 @@ For MacOS, you may need to install gcc6 or greater:
 brew install gcc
 ```
 
-Now, we need to install prerequisites [curl], [date], [gsl], [eigen3], [tbb], and [CGAL] (which installs [boost]):
+Now, we need to install prerequisites [curl], [date], [gsl], [catch2], [eigen3], [tbb], and [CGAL] (which installs [boost]):
 
 ```bash
 ./vcpkg install curl
@@ -58,3 +58,4 @@ N.B. As of 2018-11-29, the `vcpkg` formula for [date] is [broken][1] on Windows.
 [1]: https://github.com/Microsoft/vcpkg/issues/4864
 [gsl]: https://github.com/Microsoft/GSL
 [2]: https://github.com/Microsoft/vcpkg/issues/3772
+[catch2]: https://github.com/catchorg/Catch2

@@ -7,7 +7,7 @@
 This project is a test case of [CDT-plusplus] using [vcpkg]. To get started:
 
 ```bash
-git clone https://github.com/Microsft/vcpkg.git
+git clone https://github.com/Microsoft/vcpkg.git
 cd vcpkg
 ./bootstrap-vcpkg.sh
 ./vcpkg integrate install
@@ -16,11 +16,18 @@ cd vcpkg
 
 Note that this helpfully installs up to date versions of [CMake] and [Ninja].
 
-Now, we need to install prerequisites [curl], [date], [eigen3], [tbb], ~nd [CGAL] (which installs [boost]):
+For MacOS, you may need to install gcc6 or greater:
+
+```bash
+brew install gcc
+```
+
+Now, we need to install prerequisites [curl], [date], [gsl], [eigen3], [tbb], ~nd [CGAL] (which installs [boost]):
 
 ```bash
 ./vcpkg install curl
 ./vcpkg install date
+./vcpkg install gsl
 ./vcpkg install eigen3
 ./vcpkg install tbb
 ./vcpkg install cgal
@@ -50,3 +57,4 @@ N.B. As of 2018-09-04, the `vcpkg` formula for [CGAL] is [broken][1]. However, [
 [1]: https://github.com/Microsoft/vcpkg/issues/3851
 [homebrew]: https://brew.sh
 [linuxbrew]: http://linuxbrew.sh
+[gsl]: https://github.com/Microsoft/GSL

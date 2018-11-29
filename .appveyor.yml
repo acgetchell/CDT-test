@@ -9,8 +9,8 @@ environment:
 
 cache:
   - c:\tools\vcpkg\installed\ -> .appveyor.yml
-  - c:\tools\vcpkg\downloads\
-  - c:\projects\dev
+#  - c:\tools\vcpkg\downloads\
+#  - c:\projects\dev
 
 
 image:

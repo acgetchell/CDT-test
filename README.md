@@ -40,9 +40,7 @@ This builds from source, so it will take awhile. To use these successfully, you'
 -DCMAKE_TOOLCHAIN_FILE=/Users/adam/vcpkg/scripts/buildsystems/vcpkg.cmake
 ```
 
-N.B. As of 2018-11-04, the `vcpkg` formula for [date] is [broken][1].
-
-Possibly fixed now.
+N.B. As of 2018-11-29, the `vcpkg` formula for [date] is [broken][1].
 
 
 [CDT-plusplus]:https://github.com/acgetchell/CDT-plusplus

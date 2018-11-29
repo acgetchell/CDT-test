@@ -22,12 +22,13 @@ For MacOS, you may need to install gcc6 or greater:
 brew install gcc
 ```
 
-Now, we need to install prerequisites [curl], [date], [gsl], [eigen3], [tbb], ~nd [CGAL] (which installs [boost]):
+Now, we need to install prerequisites [curl], [date], [gsl], [eigen3], [tbb], and [CGAL] (which installs [boost]):
 
 ```bash
 ./vcpkg install curl
 ./vcpkg install date
 ./vcpkg install gsl
+./vcpkg install catch2
 ./vcpkg install eigen3
 ./vcpkg install tbb
 ./vcpkg install cgal
@@ -40,7 +41,7 @@ This builds from source, so it will take awhile. To use these successfully, you'
 -DCMAKE_TOOLCHAIN_FILE=/Users/adam/vcpkg/scripts/buildsystems/vcpkg.cmake
 ```
 
-N.B. As of 2018-11-29, the `vcpkg` formula for [date] is [broken][1].
+N.B. As of 2018-11-29, the `vcpkg` formula for [date] is [broken][1] on Windows. The formula for [cgal] is broken on MacOS and Linux as it relies on the formula for mpir, which [doesn't build][2] on those platforms.
 
 
 [CDT-plusplus]:https://github.com/acgetchell/CDT-plusplus
@@ -56,3 +57,4 @@ N.B. As of 2018-11-29, the `vcpkg` formula for [date] is [broken][1].
 [boost]: https://www.boost.org/
 [1]: https://github.com/Microsoft/vcpkg/issues/4864
 [gsl]: https://github.com/Microsoft/GSL
+[2]: https://github.com/Microsoft/vcpkg/issues/3772

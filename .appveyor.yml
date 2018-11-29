@@ -31,15 +31,22 @@ shallow_clone: true
 configuration: Release
 
 install:
-  - if not exist "c:\projects\dev" (
-      mkdir c:\projects\dev
-      cd c:\projects\dev
-      set NINJA_URL="https://github.com/ninja-build/ninja/releases/download/v1.8.2/ninja-win.zip"
-      appveyor DownloadFile %NINJA_URL% -FileName ninja.zip
-      7z x ninja.zip -oC:\projects\dev\ninja > nul
-    )
+#  - if not exist "c:\projects\dev" (
+#      mkdir c:\projects\dev
+#      cd c:\projects\dev
+#      set NINJA_URL="https://github.com/ninja-build/ninja/releases/download/v1.8.2/ninja-win.zip"
+#      appveyor DownloadFile %NINJA_URL% -FileName ninja.zip
+#      7z x ninja.zip -oC:\projects\dev\ninja > nul
+#    )
+  - mkdir C:\projects\dev
+  - cd C:\projects\dev
+  # Install Ninja
+  - set NINJA_URL="https://github.com/ninja-build/ninja/releases/download/v1.8.2/ninja-win.zip"
+  - appveyor DownloadFile %NINJA_URL% -FileName ninja.zip
+  - 7z x ninja.zip -oC:\projects\dev\ninja > nul
   - set PATH=%PATH%;C:\projects\dev\ninja
   - ninja --version
+  - set CMAKE_MAKE_PROGRAM=C:\projects\dev\ninja\ninja.exe
   # Verify CMake
   - cmake --version
   # Install make because TBB uses it

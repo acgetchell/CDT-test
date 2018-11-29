@@ -40,7 +40,7 @@ This builds from source, so it will take awhile. To use these successfully, you'
 -DCMAKE_TOOLCHAIN_FILE=/Users/adam/vcpkg/scripts/buildsystems/vcpkg.cmake
 ```
 
-N.B. As of 2018-09-04, the `vcpkg` formula for [CGAL] is [broken][1]. However, [homebrew] or [linuxbrew] can be used to install [CGAL] successfully.
+N.B. As of 2018-11-04, the `vcpkg` formula for [date] is [broken][1].
 
 Possibly fixed now.
 
@@ -56,7 +56,5 @@ Possibly fixed now.
 [tbb]: https://www.threadingbuildingblocks.org/
 [CLion]: https://www.jetbrains.com/clion/
 [boost]: https://www.boost.org/
-[1]: https://github.com/Microsoft/vcpkg/issues/3851
-[homebrew]: https://brew.sh
-[linuxbrew]: http://linuxbrew.sh
+[1]: https://github.com/Microsoft/vcpkg/issues/4864
 [gsl]: https://github.com/Microsoft/GSL

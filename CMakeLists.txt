@@ -45,7 +45,13 @@ find_package(CURL REQUIRED)
 #Date
 find_package(unofficial-date CONFIG REQUIRED)
 
-find_package(BOOST REQUIRED)
+# GSL
+find_package(GSL REQUIRED)
+
+# Catch
+find_package(Catch2 CONFIG REQUIRED)
+
+#find_package(BOOST REQUIRED)
 
 find_package(Eigen3 CONFIG REQUIRED)
 
@@ -66,6 +72,6 @@ endif()
 
 include_directories(BEFORE ${PROJECT_SOURCE_DIR}/include)
 add_executable(cdt-opt ${PROJECT_SOURCE_DIR}/src/cdt-opt.cpp)
-target_link_libraries(cdt-opt PRIVATE ${CURL_LIBRARIES} unofficial::date::tz unofficial::date::date Eigen3::Eigen TBB::tbb CGAL::CGAL)
+target_link_libraries(cdt-opt PRIVATE ${CURL_LIBRARIES} unofficial::date::tz unofficial::date::date GSL::gsl GSL::gslcblas Catch2::Catch2 Eigen3::Eigen TBB::tbb CGAL::CGAL CGAL::Core)
 target_include_directories(cdt-opt PRIVATE ${CURL_INCLUDE_DIRS})
 target_compile_features(cdt-opt PRIVATE cxx_std_17)

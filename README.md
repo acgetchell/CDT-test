@@ -41,7 +41,9 @@ This builds from source, so it will take awhile. To use these successfully, you'
 -DCMAKE_TOOLCHAIN_FILE=/Users/adam/vcpkg/scripts/buildsystems/vcpkg.cmake
 ```
 
-N.B. As of 2018-11-29, the `vcpkg` formula for [date] is [broken][1] on Windows. The formula for [cgal] is broken on MacOS and Linux as it relies on the formula for mpir, which [doesn't build][2] on those platforms.
+N.B. As of 2018-11-29, the `vcpkg` formula for [date] is [broken][1].
+The formula for [cgal] is broken on MacOS and Linux as it relies on the formula for [mpir], which [doesn't build][2] on those platforms.
+You can use [homebrew] or [linuxbrew] to successfully install [CGAL].
 
 
 [CDT-plusplus]:https://github.com/acgetchell/CDT-plusplus
@@ -59,3 +61,6 @@ N.B. As of 2018-11-29, the `vcpkg` formula for [date] is [broken][1] on Windows.
 [gsl]: https://github.com/Microsoft/GSL
 [2]: https://github.com/Microsoft/vcpkg/issues/3772
 [catch2]: https://github.com/catchorg/Catch2
+[homebrew]: https://brew.sh
+[linuxbrew]: https://linuxbrew.sh
+[mpir]: http://mpir.org

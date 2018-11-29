@@ -90,6 +90,9 @@ build_script:
   - cmake -G Ninja -DCMAKE_BUILD_TYPE=Release -DTESTS:BOOL=OFF -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake ..
   - cmake --build .
 
+on_success:
+  - cmake --build . --target test
+
 notifications:
   - provider: Email
     to:

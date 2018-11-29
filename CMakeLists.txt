@@ -72,6 +72,15 @@ endif()
 
 include_directories(BEFORE ${PROJECT_SOURCE_DIR}/include)
 add_executable(cdt-opt ${PROJECT_SOURCE_DIR}/src/cdt-opt.cpp)
-target_link_libraries(cdt-opt PRIVATE ${CURL_LIBRARIES} unofficial::date::tz unofficial::date::date GSL::gsl GSL::gslcblas Catch2::Catch2 Eigen3::Eigen TBB::tbb CGAL::CGAL CGAL::Core)
+target_link_libraries(cdt-opt PRIVATE ${CURL_LIBRARIES} unofficial::date::tz unofficial::date::date GSL::gsl GSL::gslcblas Catch2::Catch2 Eigen3::Eigen TBB::tbb CGAL::CGAL)
 target_include_directories(cdt-opt PRIVATE ${CURL_INCLUDE_DIRS})
 target_compile_features(cdt-opt PRIVATE cxx_std_17)
+
+# Tests
+enable_testing()
+
+# CTest basic testing
+add_test(NAME CDT-Opt
+        COMMAND $<TARGET_FILE:cdt-opt>)
+set_tests_properties(CDT-Opt
+        PROPERTIES PASS_REGULAR_EXPRESSION "64000 simplices on 16 timeslices desired.")

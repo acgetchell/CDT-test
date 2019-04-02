@@ -22,6 +22,13 @@ For MacOS, you may need to install gcc6 or greater:
 brew install gcc
 ```
 
+You will also need to install `yasm` so that `vcpkg` can install `mpir`, which is required for [CGAL]:
+
+```bash
+brew install yasm
+
+```
+
 Now, we need to install prerequisites [curl], [date], [gsl], [catch2], [eigen3], [tbb], and [CGAL] (which installs [boost]):
 
 ```bash
@@ -42,9 +49,10 @@ This builds from source, so it will take awhile. To use these successfully, you'
 ```
 
 N.B. As of 2018-11-29, the `vcpkg` formula for [date] is [broken][1].
-The formula for [cgal] is broken on MacOS and Linux as it relies on the formula for [mpir], which [doesn't build][2] on those platforms.
+As of 2019-04-02, the formula for [cgal] is broken on MacOS and Linux as it relies on the formula for [mpfr], which [doesn't build][2] on those platforms.
+
 You can use [homebrew] to successfully install [CGAL], but HomeBrew 2.0 does not support options anymore, and the
-default CGAL package does not install with Qt support. Hence, the demos cannot be run.
+default CGAL package does not install with Qt support. Hence, the demos cannot be run if CGAL is install with `brew install cgal`.
 
 
 [CDT-plusplus]:https://github.com/acgetchell/CDT-plusplus
@@ -60,7 +68,7 @@ default CGAL package does not install with Qt support. Hence, the demos cannot b
 [boost]: https://www.boost.org/
 [1]: https://github.com/Microsoft/vcpkg/issues/4864
 [gsl]: https://github.com/Microsoft/GSL
-[2]: https://github.com/Microsoft/vcpkg/issues/3772
+[2]: https://github.com/Microsoft/vcpkg/issues/5910
 [catch2]: https://github.com/catchorg/Catch2
 [homebrew]: https://brew.sh
-[mpir]: http://mpir.org
+[mpfr]: http://mpfr.org

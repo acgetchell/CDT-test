@@ -6,6 +6,7 @@ project(CDT-test VERSION 0.1.0 LANGUAGES CXX)
 set(BOOST_MIN_VERSION "1.64.0")
 # Compile commands for ClangTidy et. al
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_CXX_STANDARD 17)
 
 #
 # OPTIONS  ##

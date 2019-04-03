@@ -81,7 +81,7 @@ target_link_libraries(cdt-opt
                               ${cgal_lib}
                               CGAL::CGAL
                               CGAL_Qt5_moc_and_resources)
-target_include_directories(cdt-opt PRIVATE ${CURL_INCLUDE_DIRS})
+#target_include_directories(cdt-opt PRIVATE ${CURL_INCLUDE_DIRS})
 target_compile_features(cdt-opt PRIVATE cxx_std_17)
 
 # Tests

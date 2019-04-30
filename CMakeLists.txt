@@ -57,7 +57,7 @@ find_package(Catch2 CONFIG REQUIRED)
 
 find_package(Eigen3 CONFIG REQUIRED)
 
-find_package(TBB CONFIG REQUIRED)
+find_package(TBB CONFIG)
 
 # CGAL
 find_package(CGAL CONFIG REQUIRED)
@@ -77,7 +77,7 @@ target_link_libraries(cdt-opt
                               GSL::gslcblas
                               Catch2::Catch2
                               Eigen3::Eigen
-                              TBB::tbb
+#                              TBB::tbb
                               ${cgal_lib}
                               CGAL::CGAL
                               CGAL_Qt5_moc_and_resources)

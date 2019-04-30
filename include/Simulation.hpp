@@ -26,8 +26,10 @@
 struct Simulation
 {
   using element = function_ref<SimplicialManifold(SimplicialManifold)>;
+private:
   std::vector<element> queue_;
 
+public:
   /// @brief Queue of function objects.
   /// @tparam T Function object type
   /// @param callable The function to be called
@@ -43,7 +45,7 @@ struct Simulation
   SimplicialManifold start(SimplicialManifold&& value) const
   {
     for (const auto& item : queue_) { value = item(value); }
-    return value;
+    return std::move(value);
   }
 };
 

@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.11)
 project(CDT-test VERSION 0.1.0 LANGUAGES CXX)
 
 # Set mimumum Boost
-set(BOOST_MIN_VERSION "1.64.0")
+set(BOOST_MIN_VERSION "1.70.0")
 # Compile commands for ClangTidy et. al
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 17)
@@ -41,23 +41,17 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 # Project  ##
 #
 
-# Curl
-find_package(CURL REQUIRED)
-
 # Date
-find_package(unofficial-date CONFIG REQUIRED)
-
-# GSL
-find_package(GSL REQUIRED)
+find_package(date CONFIG REQUIRED)
 
 # Catch
 find_package(Catch2 CONFIG REQUIRED)
 
-# find_package(BOOST REQUIRED)
+find_package(BOOST REQUIRED)
 
 find_package(Eigen3 CONFIG REQUIRED)
 
-find_package(TBB CONFIG)
+# find_package(TBB CONFIG REQUIRED)
 
 # CGAL
 find_package(CGAL CONFIG REQUIRED)
@@ -65,23 +59,18 @@ find_package(CGAL CONFIG REQUIRED)
 set(CGAL_DONT_OVERRIDE_CMAKE_FLAGS TRUE
     CACHE BOOL "Force CGAL to maintain CMAKE flags")
 set(CGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE TRUE)
-# include(${CGAL_USE_FILE}) include(CGAL_CreateSingleSourceCGALProgram)
 
 include_directories(BEFORE ${PROJECT_SOURCE_DIR}/include)
 add_executable(cdt-opt ${PROJECT_SOURCE_DIR}/src/cdt-opt.cpp)
 target_link_libraries(cdt-opt
-                      PRIVATE ${CURL_LIBRARIES}
-                              unofficial::date::tz
-                              unofficial::date::date
-                              GSL::gsl
-                              GSL::gslcblas
+                      PRIVATE date::tz
+                              date::date
                               Catch2::Catch2
                               Eigen3::Eigen
-#                              TBB::tbb
                               ${cgal_lib}
-                              CGAL::CGAL)
-#                              CGAL_Qt5_moc_and_resources)
-#target_include_directories(cdt-opt PRIVATE ${CURL_INCLUDE_DIRS})
+                              CGAL::${cgal_lib}
+                              CGAL_Qt5_moc_and_resources
+                              CGAL::Qt5_moc_and_resources)
 target_compile_features(cdt-opt PRIVATE cxx_std_17)
 
 # Tests

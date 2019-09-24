@@ -16,7 +16,7 @@ cd vcpkg
 
 Note that this helpfully installs up to date versions of [CMake] and [Ninja].
 
-For MacOS, you may need to install gcc6 or greater:
+For MacOS, you may need to install gcc with [homebrew]:
 
 ```bash
 brew install gcc
@@ -29,15 +29,13 @@ brew install yasm
 
 ```
 
-Now, we need to install prerequisites [curl], [date], [gsl], [catch2], [eigen3], [tbb], and [CGAL] (which installs [boost]):
+At minimum, we need to install prerequisites [date], [catch2], [eigen3], [boost], and [CGAL]:
 
 ```bash
-./vcpkg install curl
 ./vcpkg install date
-./vcpkg install gsl
 ./vcpkg install catch2
 ./vcpkg install eigen3
-./vcpkg install tbb
+./vcpkg install boost
 ./vcpkg install cgal
 
 ```
@@ -48,8 +46,28 @@ This builds from source, so it will take awhile. To use these successfully, you'
 -DCMAKE_TOOLCHAIN_FILE=/Users/adam/vcpkg/scripts/buildsystems/vcpkg.cmake
 ```
 
-N.B. As of 2018-11-29, the `vcpkg` formula for [date] is [broken][1].
-As of 2019-04-02, the formula for [cgal] is broken on MacOS and Linux as it relies on the formula for [mpfr], which [doesn't build][2] on those platforms.
+N.B. As of 2018-11-29, the `vcpkg` formula for [date] is [broken][1]. It installs, but doesn't link.
+
+
+As of 2019-09-24, the formula for [mpfr] is [fixed][2], which also fixes the formula install for [cgal]. However, `find_package()` misses targets:
+
+```bash
+CMake Error at /Users/adam/vcpkg/scripts/buildsystems/vcpkg.cmake:166 (_add_executable):
+  Target "cdt-opt" links to target "CGAL::" but the target was not found.
+  Perhaps a find_package() call is missing for an IMPORTED target, or an
+  ALIAS target is missing?
+Call Stack (most recent call first):
+  CMakeLists.txt:71 (add_executable)
+
+
+CMake Error at /Users/adam/vcpkg/scripts/buildsystems/vcpkg.cmake:166 (_add_executable):
+  Target "cdt-opt" links to target "CGAL::Qt5_moc_and_resources" but the
+  target was not found.  Perhaps a find_package() call is missing for an
+  IMPORTED target, or an ALIAS target is missing?
+Call Stack (most recent call first):
+  CMakeLists.txt:71 (add_executable)
+```
+This is after I did a `git pull`, `./vcpkg update`, and `./bootstrap-vcpkg.sh` on 2019-09-24 to ensure up-to-date ports and binaries.
 
 You can use [homebrew] to successfully install [CGAL], but HomeBrew 2.0 does not support options anymore, and the
 default CGAL package does not install with Qt support. Hence, the demos cannot be run if CGAL is install with `brew install cgal`.
@@ -60,14 +78,11 @@ default CGAL package does not install with Qt support. Hence, the demos cannot b
 [CMake]:https:://cmake.org
 [Ninja]:https://ninja-build.org
 [CGAL]: https://www.cgal.org/
-[curl]: https://curl.haxx.se/libcurl/
 [date]: https://github.com/HowardHinnant/date
 [eigen3]: https://eigen.tuxfamily.org/dox/
-[tbb]: https://www.threadingbuildingblocks.org/
 [CLion]: https://www.jetbrains.com/clion/
 [boost]: https://www.boost.org/
 [1]: https://github.com/Microsoft/vcpkg/issues/4864
-[gsl]: https://github.com/Microsoft/GSL
 [2]: https://github.com/Microsoft/vcpkg/issues/5910
 [catch2]: https://github.com/catchorg/Catch2
 [homebrew]: https://brew.sh

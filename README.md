@@ -26,7 +26,6 @@ You will also need to install `yasm` so that `vcpkg` can install `mpir`, which i
 
 ```bash
 brew install yasm
-
 ```
 
 At minimum, we need to install prerequisites [date], [catch2], [eigen3], [boost], and [CGAL]:
@@ -46,10 +45,11 @@ This builds from source, so it will take awhile. To use these successfully, you'
 -DCMAKE_TOOLCHAIN_FILE=/Users/adam/vcpkg/scripts/buildsystems/vcpkg.cmake
 ```
 
-N.B. As of 2018-11-29, the `vcpkg` formula for [date] is [broken][1]. It installs, but doesn't link.
+N.B. As of 2018-11-29, the `vcpkg` formula for [date] is [broken][1]. It installs, but doesn't seem to link. I can't tell, because of the next issue.
 
+As of 2019-09-24, the formula for [mpfr] is [fixed][2], which also fixes the formula install for [cgal].
 
-As of 2019-09-24, the formula for [mpfr] is [fixed][2], which also fixes the formula install for [cgal]. However, `find_package()` misses targets:
+However, there is an [issue](https://github.com/microsoft/vcpkg/issues/8328) with actually using the library; `find_package()` misses targets:
 
 ```bash
 CMake Error at /Users/adam/vcpkg/scripts/buildsystems/vcpkg.cmake:166 (_add_executable):
@@ -67,7 +67,7 @@ CMake Error at /Users/adam/vcpkg/scripts/buildsystems/vcpkg.cmake:166 (_add_exec
 Call Stack (most recent call first):
   CMakeLists.txt:71 (add_executable)
 ```
-This is after I did a `git pull`, `./vcpkg update`, and `./bootstrap-vcpkg.sh` on 2019-09-24 to ensure up-to-date ports and binaries.
+This is after I did a `git pull`, `./bootstrap-vcpkg.sh`, and `./vcpkg update` on 2019-09-25 to ensure up-to-date ports and binaries.
 
 You can use [homebrew] to successfully install [CGAL], but HomeBrew 2.0 does not support options anymore, and the
 default CGAL package does not install with Qt support. Hence, the demos cannot be run if CGAL is install with `brew install cgal`.

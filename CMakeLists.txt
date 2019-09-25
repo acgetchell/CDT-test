@@ -47,7 +47,7 @@ find_package(date CONFIG REQUIRED)
 # Catch
 find_package(Catch2 CONFIG REQUIRED)
 
-find_package(BOOST REQUIRED)
+find_package(Boost REQUIRED)
 
 find_package(Eigen3 CONFIG REQUIRED)
 

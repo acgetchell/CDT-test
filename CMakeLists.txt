@@ -67,10 +67,7 @@ target_link_libraries(cdt-opt
                               date::date
                               Catch2::Catch2
                               Eigen3::Eigen
-                              ${cgal_lib}
-                              CGAL::${cgal_lib}
-                              CGAL_Qt5_moc_and_resources
-                              CGAL::Qt5_moc_and_resources)
+                              CGAL::CGAL)
 target_compile_features(cdt-opt PRIVATE cxx_std_17)
 
 # Tests

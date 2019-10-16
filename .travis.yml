@@ -6,7 +6,7 @@ osx_image: xcode11.2
 addons:
   apt:
     sources:
-      - ubuntu-toolchain-r-test
+      - sourceline: 'ppa:ubuntu-toolchain-r-test'
     packages:
       - g++-9
       - linuxbrew-wrapper

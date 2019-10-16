@@ -5,8 +5,12 @@ osx_image: xcode11.2
 
 addons:
   apt:
+    sources:
+      - ubuntu-toolchain-r-test
     packages:
+      - g++-9
       - linuxbrew-wrapper
+      - yasm
   homebrew:
     packages:
       - yasm
@@ -21,19 +25,18 @@ compiler:
   - clang
 
 before_install:
-  - |
-    # Install Linuxbrew
-    if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-      PATH="$HOME/.linuxbrew/bin:$PATH"
-      echo 'export PATH="/home/travis/.linuxbrew/bin:$PATH"' >> ~/.bash_profile
-      yes '' | brew --version
-      export MANPATH="$(brew --prefix)/share/man:$MANPATH"
-      export INFOPATH="$(brew --prefix)/share/info:$INFOPATH"
-      (brew update || brew update)
-      brew doctor
-      brew config
-      brew install yasm
-    fi
+#  - |
+#    # Install Linuxbrew
+#    if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+#      PATH="$HOME/.linuxbrew/bin:$PATH"
+#      echo 'export PATH="/home/travis/.linuxbrew/bin:$PATH"' >> ~/.bash_profile
+#      yes '' | brew --version
+#      export MANPATH="$(brew --prefix)/share/man:$MANPATH"
+#      export INFOPATH="$(brew --prefix)/share/info:$INFOPATH"
+#      (brew update || brew update)
+#      brew doctor
+#      brew config
+#    fi
   - git clone https://github.com/Microsoft/vcpkg.git
   - cd vcpkg
   - ./bootstrap-vcpkg.sh
@@ -41,6 +44,7 @@ before_install:
   - git pull
 
 install:
+  - if [[ "$CXX" == "g++" ]]; then export CXX="g++-9" CC="gcc-9"; fi
   - ./vcpkg install date
   - ./vcpkg install catch2
   - ./vcpkg install eigen3

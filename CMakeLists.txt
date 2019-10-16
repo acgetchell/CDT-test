@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.11)
 
-project(CDT-test VERSION 0.1.0 LANGUAGES CXX)
+project(
+  CDT-test
+  VERSION 0.1.0
+  LANGUAGES CXX)
 
 #
 # OPTIONS  ##
@@ -23,21 +26,20 @@ set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
 
 # Compiler flags
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-  add_compile_options(-frounding-math
-      -Wmisleading-indentation
-      -Wduplicated-cond
-      -Wduplicated-branches
-      -Wlogical-op
-      -Wuseless-cast)
+  add_compile_options(
+    -frounding-math -Wmisleading-indentation -Wduplicated-cond
+    -Wduplicated-branches -Wlogical-op -Wuseless-cast)
 endif()
 
 # Turn off CGAL Triangulation Assertions and Postconditions
 add_definitions(-DCGAL_TRIANGULATION_NO_ASSERTIONS
                 -DCGAL_TRIANGULATION_NO_POSTCONDITIONS)
 
-# Disable CLion generation of RelWithDebInfo and MinSizeRel to avoid conflicts
-# with CGAL_SetupFlags.cmake
-set(CMAKE_CONFIGURATION_TYPES "Release" "Debug" "RelWithDebInfo" CACHE STRING "" FORCE)
+# Disable CLion generation of MinSizeRel to avoid conflicts with
+# CGAL_SetupFlags.cmake
+set(CMAKE_CONFIGURATION_TYPES
+    "Release" "Debug" "RelWithDebInfo"
+    CACHE STRING "" FORCE)
 
 # Extra warnings
 add_compile_options(-Wall -Wno-comment)
@@ -49,34 +51,35 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 # Project  ##
 #
 
-# Date
+# https://github.com/HowardHinnant/date
 find_package(date CONFIG REQUIRED)
 
-# Catch
+# https://github.com/catchorg/Catch2
 find_package(Catch2 CONFIG REQUIRED)
 
+# https://www.boost.org
 find_package(Boost REQUIRED)
 
+# https://eigen.tuxfamily.org/index.php?title=Main_Page
 find_package(Eigen3 CONFIG REQUIRED)
 
-#find_package(TBB CONFIG REQUIRED)
+# find_package(TBB CONFIG REQUIRED)
 
-# CGAL
+# https://github.com/CGAL/cgal
 find_package(CGAL CONFIG REQUIRED)
 # Don't let CGAL override flags
-set(CGAL_DONT_OVERRIDE_CMAKE_FLAGS TRUE
+set(CGAL_DONT_OVERRIDE_CMAKE_FLAGS
+    TRUE
     CACHE BOOL "Force CGAL to maintain CMAKE flags")
 set(CGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE TRUE)
 
 include_directories(BEFORE ${PROJECT_SOURCE_DIR}/include)
 add_executable(cdt-opt ${PROJECT_SOURCE_DIR}/src/cdt-opt.cpp)
-target_link_libraries(cdt-opt
-                      PRIVATE date::tz
-                              date::date
-                              Catch2::Catch2
-                              Eigen3::Eigen
-#                              TBB::tbb
-                              CGAL::CGAL)
+target_link_libraries(
+  cdt-opt
+  PRIVATE date::tz date::date Catch2::Catch2 Eigen3::Eigen
+          # TBB::tbb
+          CGAL::CGAL)
 target_compile_features(cdt-opt PRIVATE cxx_std_17)
 
 # Tests
@@ -84,6 +87,6 @@ enable_testing()
 
 # CTest basic testing
 add_test(NAME CDT-Opt COMMAND $<TARGET_FILE:cdt-opt>)
-set_tests_properties(CDT-Opt
-                     PROPERTIES PASS_REGULAR_EXPRESSION
-                                "64000 simplices on 16 timeslices desired.")
+set_tests_properties(
+  CDT-Opt PROPERTIES PASS_REGULAR_EXPRESSION
+                     "64000 simplices on 16 timeslices desired.")

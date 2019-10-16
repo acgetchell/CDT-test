@@ -29,8 +29,9 @@
 
 # IDE
 .idea/
-cmake-build-debug/
-cmake-build-release/
+cmake-build-debug
+cmake-build-release
+cmake-build-relwithdebinfo
 build/
 
 # MacOS

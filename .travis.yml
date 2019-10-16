@@ -9,7 +9,6 @@ addons:
       - sourceline: 'ppa:ubuntu-toolchain-r/test'
     packages:
       - g++-9
-      - linuxbrew-wrapper
       - yasm
   homebrew:
     packages:
@@ -24,19 +23,12 @@ compiler:
   - gcc
   - clang
 
+jobs:
+  allow_failures:
+    - os: osx
+
+
 before_install:
-#  - |
-#    # Install Linuxbrew
-#    if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-#      PATH="$HOME/.linuxbrew/bin:$PATH"
-#      echo 'export PATH="/home/travis/.linuxbrew/bin:$PATH"' >> ~/.bash_profile
-#      yes '' | brew --version
-#      export MANPATH="$(brew --prefix)/share/man:$MANPATH"
-#      export INFOPATH="$(brew --prefix)/share/info:$INFOPATH"
-#      (brew update || brew update)
-#      brew doctor
-#      brew config
-#    fi
   - git clone https://github.com/Microsoft/vcpkg.git
   - cd vcpkg
   - ./bootstrap-vcpkg.sh
@@ -49,15 +41,18 @@ install:
   - ./vcpkg install catch2
   - ./vcpkg install eigen3
   - ./vcpkg install boost
+  - ./vcpkg install mpir
+  - ./vcpkg install mpfr
   - ./vcpkg install cgal
+  - pwd
   - cd ..
 
 script:
   - mkdir build
-  - cd build
   - cd build || exit
+  - pwd
   - cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=$HOME/vcpkg/scripts/buildsystems/vcpkg.cmake ..
   - cmake --build .
 
-after_success:
-  - ctest
+#after_success:
+#  - ctest

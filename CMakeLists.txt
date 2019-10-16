@@ -2,15 +2,18 @@ cmake_minimum_required(VERSION 3.11)
 
 project(CDT-test VERSION 0.1.0 LANGUAGES CXX)
 
-# Set mimumum Boost
-set(BOOST_MIN_VERSION "1.70.0")
-# Compile commands for ClangTidy et. al
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(CMAKE_CXX_STANDARD 17)
-
 #
 # OPTIONS  ##
 #
+
+# Set mimumum Boost
+set(BOOST_MIN_VERSION "1.70.0")
+
+# Compile commands for ClangTidy et. al
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+# Use C++17 for std::optional
+set(CMAKE_CXX_STANDARD 17)
 
 # Turn on / off TBB
 set(TBB_ON FALSE)
@@ -19,8 +22,13 @@ set(TBB_ON FALSE)
 set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
 
 # Compiler flags
-if(CMAKE_COMPILER_IS_GNUCXX)
-  set(CMAKE_CXX_FLAGS "-frounding-math")
+if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+  add_compile_options(-frounding-math
+      -Wmisleading-indentation
+      -Wduplicated-cond
+      -Wduplicated-branches
+      -Wlogical-op
+      -Wuseless-cast)
 endif()
 
 # Turn off CGAL Triangulation Assertions and Postconditions
@@ -29,7 +37,7 @@ add_definitions(-DCGAL_TRIANGULATION_NO_ASSERTIONS
 
 # Disable CLion generation of RelWithDebInfo and MinSizeRel to avoid conflicts
 # with CGAL_SetupFlags.cmake
-set(CMAKE_CONFIGURATION_TYPES "Release" "Debug" CACHE STRING "" FORCE)
+set(CMAKE_CONFIGURATION_TYPES "Release" "Debug" "RelWithDebInfo" CACHE STRING "" FORCE)
 
 # Extra warnings
 add_compile_options(-Wall -Wno-comment)

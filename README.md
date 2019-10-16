@@ -1,5 +1,5 @@
 # CDT-test
-[![Build Status](https://img.shields.io/travis/acgetchell/CDT-plusplus.svg?label=Linux/MacOS)](https://travis-ci.org/acgetchell/CDT-test)
+[![Build Status](https://img.shields.io/travis/acgetchell/CDT-test.svg?label=Linux/MacOS)](https://travis-ci.org/acgetchell/CDT-test)
 [![Windows Build status](https://img.shields.io/appveyor/ci/acgetchell/cdt-test.svg?label=Windows)](https://ci.appveyor.com/project/acgetchell/cdt-test)
 
 ## Setup
@@ -27,6 +27,10 @@ You will also need to install `yasm` so that `vcpkg` can install `mpir`, which i
 ```bash
 brew install yasm
 ```
+Linux:
+```bash
+sudo apt-get install yasm
+```
 
 At minimum, we need to install prerequisites [date], [catch2], [eigen3], [boost], and [CGAL]:
 
@@ -42,7 +46,7 @@ At minimum, we need to install prerequisites [date], [catch2], [eigen3], [boost]
 This builds from source, so it will take awhile. To use these successfully, you'll need to set the `CMAKE_TOOLCHAIN_FILE` option in your IDE or whatever invokes `CMake` to wherever you've installed `vcpkg`, for example:
 
 ```bash
--DCMAKE_TOOLCHAIN_FILE=/Users/adam/vcpkg/scripts/buildsystems/vcpkg.cmake
+-DCMAKE_TOOLCHAIN_FILE=$HOME/vcpkg/scripts/buildsystems/vcpkg.cmake
 ```
 
 N.B. As of 2018-11-29, the `vcpkg` formula for [date] is [broken][1]. It installs, but doesn't seem to link.

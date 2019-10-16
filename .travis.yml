@@ -3,6 +3,15 @@ sudo: false
 dist: bionic
 osx_image: xcode11.2
 
+addons:
+  apt:
+    packages:
+      - linuxbrew-wrapper
+  homebrew:
+    packages:
+      - yasm
+    update: true
+
 os:
   - linux
   - osx
@@ -23,8 +32,8 @@ before_install:
       (brew update || brew update)
       brew doctor
       brew config
+      brew install yasm
     fi
-  - brew install yasm
   - git clone https://github.com/Microsoft/vcpkg.git
   - cd vcpkg
   - ./bootstrap-vcpkg.sh

@@ -51,7 +51,7 @@ find_package(Boost REQUIRED)
 
 find_package(Eigen3 CONFIG REQUIRED)
 
-# find_package(TBB CONFIG REQUIRED)
+#find_package(TBB CONFIG REQUIRED)
 
 # CGAL
 find_package(CGAL CONFIG REQUIRED)
@@ -67,6 +67,7 @@ target_link_libraries(cdt-opt
                               date::date
                               Catch2::Catch2
                               Eigen3::Eigen
+#                              TBB::tbb
                               CGAL::CGAL)
 target_compile_features(cdt-opt PRIVATE cxx_std_17)
 

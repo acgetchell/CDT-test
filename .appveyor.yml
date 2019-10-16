@@ -50,7 +50,7 @@ install:
   # Verify CMake
   - cmake --version
   # Install make because TBB uses it
-  - choco install make
+#  - choco install make
   - cd c:\tools\vcpkg
   # Update ports
   - git pull
@@ -65,7 +65,7 @@ install:
   - vcpkg install catch2
   - vcpkg install docopt
   - vcpkg install eigen3
-  - vcpkg install tbb
+#  - vcpkg install tbb
   - vcpkg install cgal
   # Setup Clang-cl
   - set PATH=%PATH%;"C:\Program Files\LLVM\bin"

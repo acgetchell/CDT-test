@@ -45,45 +45,18 @@ This builds from source, so it will take awhile. To use these successfully, you'
 -DCMAKE_TOOLCHAIN_FILE=/Users/adam/vcpkg/scripts/buildsystems/vcpkg.cmake
 ```
 
-N.B. As of 2018-11-29, the `vcpkg` formula for [date] is [broken][1]. It installs, but doesn't seem to link. I can't tell, because of the next issue.
-
-As of 2019-09-24, the formula for [mpfr] is [fixed][2], which also fixes the formula install for [cgal].
-
-However, there is an [issue](https://github.com/microsoft/vcpkg/issues/8328) with actually using the library; `find_package()` misses targets:
-
-```bash
-CMake Error at /Users/adam/vcpkg/scripts/buildsystems/vcpkg.cmake:166 (_add_executable):
-  Target "cdt-opt" links to target "CGAL::" but the target was not found.
-  Perhaps a find_package() call is missing for an IMPORTED target, or an
-  ALIAS target is missing?
-Call Stack (most recent call first):
-  CMakeLists.txt:71 (add_executable)
-
-
-CMake Error at /Users/adam/vcpkg/scripts/buildsystems/vcpkg.cmake:166 (_add_executable):
-  Target "cdt-opt" links to target "CGAL::Qt5_moc_and_resources" but the
-  target was not found.  Perhaps a find_package() call is missing for an
-  IMPORTED target, or an ALIAS target is missing?
-Call Stack (most recent call first):
-  CMakeLists.txt:71 (add_executable)
-```
-This is after I did a `git pull`, `./bootstrap-vcpkg.sh`, and `./vcpkg update` on 2019-09-25 to ensure up-to-date ports and binaries.
-
-You can use [homebrew] to successfully install [CGAL], but HomeBrew 2.0 does not support options anymore, and the
-default CGAL package does not install with Qt support. Hence, the demos cannot be run if CGAL is install with `brew install cgal`.
+N.B. As of 2018-11-29, the `vcpkg` formula for [date] is [broken][1]. It installs, but doesn't seem to link.
 
 
 [CDT-plusplus]:https://github.com/acgetchell/CDT-plusplus
 [vcpkg]:https://github.com/Microsoft/vcpkg
 [CMake]:https:://cmake.org
 [Ninja]:https://ninja-build.org
+[homebrew]: https://brew.sh
 [CGAL]: https://www.cgal.org/
 [date]: https://github.com/HowardHinnant/date
 [eigen3]: https://eigen.tuxfamily.org/dox/
 [CLion]: https://www.jetbrains.com/clion/
 [boost]: https://www.boost.org/
 [1]: https://github.com/Microsoft/vcpkg/issues/4864
-[2]: https://github.com/Microsoft/vcpkg/issues/5910
 [catch2]: https://github.com/catchorg/Catch2
-[homebrew]: https://brew.sh
-[mpfr]: http://mpfr.org

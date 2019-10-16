@@ -61,7 +61,6 @@ install:
   # Install required libraries
   - vcpkg install curl
   - vcpkg install date
-  - vcpkg install gsl
   - vcpkg install catch2
   - vcpkg install docopt
   - vcpkg install eigen3

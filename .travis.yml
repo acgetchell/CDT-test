@@ -1,0 +1,37 @@
+language: cpp
+sudo: false
+dist: bionic
+osx_image: xcode11.2
+
+os:
+  - linux
+  - osx
+
+compiler:
+  - gcc
+  - clang
+
+before_install:
+  - git clone https://github.com/Microsoft/vcpkg.git
+  - cd vcpkg
+  - ./bootstrap-vcpkg.sh
+  - ./vcpkg integrate install
+  - git pull
+
+install:
+  - ./vcpkg install date
+  - ./vcpkg install catch2
+  - ./vcpkg install eigen3
+  - ./vcpkg install boost
+  - ./vcpkg install cgal
+  - cd ..
+
+script:
+  - mkdir build
+  - cd build
+  - cd build || exit
+  - cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=$HOME/vcpkg/scripts/buildsystems/vcpkg.cmake ..
+  - cmake --build .
+
+after_success:
+  - ctest

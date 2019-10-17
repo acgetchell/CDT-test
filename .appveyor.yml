@@ -60,7 +60,7 @@ install:
   - vcpkg integrate install
   # Install required libraries
   - vcpkg install curl
-  - vcpkg install date
+#  - vcpkg install date
   - vcpkg install catch2
   - vcpkg install docopt
   - vcpkg install ms-gsl

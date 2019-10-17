@@ -57,6 +57,7 @@ SCENARIO("Various string/stream/time utilities", "[utility]") {
       auto constexpr timeslices = static_cast<int_fast32_t>(16);
       auto const filename =
           generate_filename(this_topology, dimensions, simplices, timeslices);
+      /// TODO: Fix intermittent Segfault here
       THEN("The output is correct.") {
         CHECK_THAT(filename,
                    Catch::Contains("S3") && Catch::Contains("16") &&

@@ -33,7 +33,8 @@
 #include <string>
 #include <typeindex>
 // H. Hinnant's date and time library
-#include <date/tz.h>
+//#include <date/tz.h>
+
 // M. O'Neill's Permutation Congruential Generator library
 #include "pcg_random.hpp"
 
@@ -106,12 +107,31 @@ inline std::ostream& operator<<(std::ostream& os, topology_type const& topology)
 /// Parser. https://github.com/HowardHinnant/date
 ///
 /// @return A formatted string with the system local time
-[[nodiscard]] inline auto currentDateTime()
-{
-  using namespace date;
-  using namespace std::chrono;
-  auto t = make_zoned(current_zone(), system_clock::now());
-  return format("%Y-%m-%d.%X%Z", t);
+//[[nodiscard]] inline auto currentDateTime()
+//{
+//  using namespace date;
+//  using namespace std::chrono;
+//  auto t = make_zoned(current_zone(), system_clock::now());
+//  return format("%Y-%m-%d.%X%Z", t);
+//}
+
+/// @brief Return the current date and time
+///
+/// **Auto** doesn't work here as a return type because **time_str** is a
+/// stack memory address.
+///
+/// @return The current data and time in a thread-safe manner using
+/// **localtime_r()** as a std::string.
+inline const std::string currentDateTime() noexcept {
+  auto now = time(0);
+  struct tm tstruct;
+  char time_str[100];
+  localtime_r(&now, &tstruct);
+  // Visit http://en.cppreference.com/w/cpp/chrono/c/strftime
+  // for more info about date/time format
+  strftime(time_str, sizeof(time_str), "%Y-%m-%d.%X%Z", &tstruct);
+
+  return time_str;
 }
 
 /// @brief  Generate useful filenames

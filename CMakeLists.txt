@@ -52,7 +52,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 #
 
 # https://github.com/HowardHinnant/date
-find_package(date CONFIG REQUIRED)
+#find_package(date CONFIG REQUIRED)
 
 # https://github.com/catchorg/Catch2
 find_package(Catch2 CONFIG REQUIRED)
@@ -81,7 +81,9 @@ include_directories(BEFORE ${PROJECT_SOURCE_DIR}/include
     ${PROJECT_SOURCE_DIR}/external/pcg-cpp/include)
 add_executable(initialize ${PROJECT_SOURCE_DIR}/src/initialize.cpp)
 target_link_libraries(initialize
-    PRIVATE date::tz date::date docopt_s Eigen3::Eigen CGAL::CGAL)
+    PRIVATE
+    #date::tz date::date
+    docopt_s Eigen3::Eigen CGAL::CGAL)
 #add_executable(cdt-opt ${PROJECT_SOURCE_DIR}/src/cdt-opt.cpp)
 #target_link_libraries(
 #  cdt-opt

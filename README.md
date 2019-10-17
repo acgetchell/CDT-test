@@ -34,11 +34,10 @@ Linux using [apt]:
 sudo apt-get install yasm
 ```
 
-At minimum, we need to install prerequisites [date], [catch2], [docopt], [ms-gsl], [eigen3],
+At minimum, we need to install prerequisites [catch2], [docopt], [ms-gsl], [eigen3],
 [boost], and [CGAL] (which installs [mpir] and [mpfr]):
 
 ```bash
-./vcpkg install date
 ./vcpkg install catch2
 ./vcpkg install docopt
 ./vcpkg install ms-gsl

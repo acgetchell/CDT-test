@@ -4,7 +4,13 @@
 
 ## Setup
 
-This project is a test case of [CDT-plusplus] using [vcpkg]. To get started:
+This project is a clean build of [CDT-plusplus] using [vcpkg]. To get started:
+
+```bash
+git clone --recurse-submodules https://github.com/acgetchell/CDT-test.git
+```
+
+Next, install [vcpkg]:
 
 ```bash
 git clone https://github.com/Microsoft/vcpkg.git
@@ -28,8 +34,8 @@ Linux using [apt]:
 sudo apt-get install yasm
 ```
 
-At minimum, we need to install prerequisites [date], [catch2], [eigen3], [boost], and [CGAL] (which
-installs [mpir] and [mpfr]):
+At minimum, we need to install prerequisites [date], [catch2], [docopt], [ms-gsl], [eigen3],
+[boost], and [CGAL] (which installs [mpir] and [mpfr]):
 
 ```bash
 ./vcpkg install date
@@ -77,3 +83,5 @@ N.B.
 [tbb]: https://github.com/intel/tbb
 [2]: https://github.com/microsoft/vcpkg/issues/8626
 [3]: https://github.com/microsoft/vcpkg/issues/8627
+[docopt]: https://github.com/docopt/docopt.cpp
+[ms-gsl]: https://github.com/microsoft/GSL

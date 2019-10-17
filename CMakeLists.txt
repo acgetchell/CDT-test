@@ -81,7 +81,7 @@ include_directories(BEFORE ${PROJECT_SOURCE_DIR}/include
     ${PROJECT_SOURCE_DIR}/external/pcg-cpp/include)
 add_executable(initialize ${PROJECT_SOURCE_DIR}/src/initialize.cpp)
 target_link_libraries(initialize
-    PRIVATE date::tz date::date Catch2::Catch2 docopt_s Eigen3::Eigen CGAL::CGAL)
+    PRIVATE date::tz date::date docopt_s Eigen3::Eigen CGAL::CGAL)
 #add_executable(cdt-opt ${PROJECT_SOURCE_DIR}/src/cdt-opt.cpp)
 #target_link_libraries(
 #  cdt-opt
@@ -90,8 +90,13 @@ target_link_libraries(initialize
 #          CGAL::CGAL)
 #target_compile_features(cdt-opt PRIVATE cxx_std_17)
 
-# Tests
+#
+# Tests    ##
+#
+
+# Catch
 enable_testing()
+add_subdirectory(tests)
 
 # CTest basic testing
 # Parameter initializer program

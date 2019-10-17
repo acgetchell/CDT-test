@@ -59,7 +59,7 @@ install:
   # Enable integration for Visual Studio/MSBuild
   - vcpkg integrate install
   # Install required libraries
-  - vcpkg install curl
+#  - vcpkg install curl
 #  - vcpkg install date
   - vcpkg install catch2
   - vcpkg install docopt
@@ -82,6 +82,7 @@ install:
 
 before_build:
   - cd c:\projects\cdt-test
+  - git submodule update --init --recursive
 
 build_script:
   - mkdir build

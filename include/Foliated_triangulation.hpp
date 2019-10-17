@@ -515,7 +515,7 @@ class Foliated_triangulation<3> : private Delaunay3
                   << "\n";
       }
 #endif
-      return invalid_vertices;
+      return std::move(invalid_vertices);
     }
   }  // check_timeslices
 

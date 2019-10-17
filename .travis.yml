@@ -39,6 +39,8 @@ install:
   - if [[ "$CXX" == "g++" ]]; then export CXX="g++-9" CC="gcc-9"; fi
   - ./vcpkg install date
   - ./vcpkg install catch2
+  - ./vcpkg install docopt
+  - ./vcpkg install ms-gsl
   - ./vcpkg install eigen3
   - ./vcpkg install boost
   - ./vcpkg install mpir
@@ -55,5 +57,5 @@ script:
   - cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=$TRAVIS_BUILD_DIR/vcpkg/scripts/buildsystems/vcpkg.cmake ..
   - cmake --build .
 
-#after_success:
-#  - ctest
+after_success:
+  - ctest

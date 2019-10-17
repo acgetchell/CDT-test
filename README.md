@@ -34,6 +34,8 @@ installs [mpir] and [mpfr]):
 ```bash
 ./vcpkg install date
 ./vcpkg install catch2
+./vcpkg install docopt
+./vcpkg install ms-gsl
 ./vcpkg install eigen3
 ./vcpkg install boost
 ./vcpkg install cgal

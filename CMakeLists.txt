@@ -57,6 +57,9 @@ find_package(date CONFIG REQUIRED)
 # https://github.com/catchorg/Catch2
 find_package(Catch2 CONFIG REQUIRED)
 
+# https://github.com/docopt/docopt.cpp
+find_package(docopt CONFIG REQUIRED)
+
 # https://www.boost.org
 find_package(Boost REQUIRED)
 
@@ -74,20 +77,29 @@ set(CGAL_DONT_OVERRIDE_CMAKE_FLAGS
     CACHE BOOL "Force CGAL to maintain CMAKE flags")
 set(CGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE TRUE)
 
-include_directories(BEFORE ${PROJECT_SOURCE_DIR}/include)
-add_executable(cdt-opt ${PROJECT_SOURCE_DIR}/src/cdt-opt.cpp)
-target_link_libraries(
-  cdt-opt
-  PRIVATE date::tz date::date Catch2::Catch2 Eigen3::Eigen
-          # TBB::tbb
-          CGAL::CGAL)
-target_compile_features(cdt-opt PRIVATE cxx_std_17)
+include_directories(BEFORE ${PROJECT_SOURCE_DIR}/include
+    ${PROJECT_SOURCE_DIR}/external/pcg-cpp/include)
+add_executable(initialize ${PROJECT_SOURCE_DIR}/src/initialize.cpp)
+target_link_libraries(initialize
+    PRIVATE date::tz date::date Catch2::Catch2 docopt_s Eigen3::Eigen CGAL::CGAL)
+#add_executable(cdt-opt ${PROJECT_SOURCE_DIR}/src/cdt-opt.cpp)
+#target_link_libraries(
+#  cdt-opt
+#  PRIVATE date::tz date::date Catch2::Catch2 Eigen3::Eigen
+#          # TBB::tbb
+#          CGAL::CGAL)
+#target_compile_features(cdt-opt PRIVATE cxx_std_17)
 
 # Tests
 enable_testing()
 
 # CTest basic testing
-add_test(NAME CDT-Opt COMMAND $<TARGET_FILE:cdt-opt>)
-set_tests_properties(
-  CDT-Opt PROPERTIES PASS_REGULAR_EXPRESSION
-                     "64000 simplices on 16 timeslices desired.")
+# Parameter initializer program
+add_test(NAME CDT-Initialize COMMAND $<TARGET_FILE:initialize>)
+set_tests_properties(CDT-Initialize
+    PROPERTIES PASS_REGULAR_EXPRESSION "Usage:./initialize")
+
+#add_test(NAME CDT-Opt COMMAND $<TARGET_FILE:cdt-opt>)
+#set_tests_properties(
+#  CDT-Opt PROPERTIES PASS_REGULAR_EXPRESSION
+#                     "64000 simplices on 16 timeslices desired.")

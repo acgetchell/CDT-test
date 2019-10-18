@@ -9,8 +9,7 @@ environment:
 
 cache:
   - c:\tools\vcpkg\installed\
-#  - c:\tools\vcpkg\downloads\
-#  - c:\projects\dev
+  - c:\projects\dev
 
 
 image:
@@ -66,8 +65,6 @@ install:
   # Enable integration for Visual Studio/MSBuild
   - vcpkg integrate install
   # Install required libraries
-#  - vcpkg install curl
-#  - vcpkg install date
   - vcpkg install catch2
   - vcpkg install docopt
   - vcpkg install ms-gsl
@@ -79,8 +76,7 @@ install:
   - clang-cl -v
   - set CC=clang-cl -mrtm
   - set CXX=clang-cl -mrtm
-#  - call "C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /x64
-#  - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
+  # Visual Studio 2017
   - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat"
   - set CMAKE_CXX_COMPILER="C:\Program Files\LLVM\bin\clang-cl"
   # Remove conflicting OpenSSL directories

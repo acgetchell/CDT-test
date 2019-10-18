@@ -116,7 +116,7 @@ inline std::ostream& operator<<(std::ostream& os, topology_type const& topology)
 //}
 
 /// @brief Return the current date and time
-inline const std::string currentDateTime() {
+inline std::string currentDateTime() {
   std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
   std::time_t now_c = std::chrono::system_clock::to_time_t(now);
   auto result_c = std::put_time(std::localtime(&now_c), "%Y-%m-%d.%X%Z");

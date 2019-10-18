@@ -59,8 +59,6 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 # Project  ##
 #
 
-# https://github.com/HowardHinnant/date find_package(date CONFIG REQUIRED)
-
 # https://github.com/catchorg/Catch2
 find_package(Catch2 CONFIG REQUIRED)
 
@@ -86,8 +84,7 @@ set(CGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE TRUE)
 include_directories(BEFORE ${PROJECT_SOURCE_DIR}/include
                     ${PROJECT_SOURCE_DIR}/external/pcg-cpp/include)
 add_executable(initialize ${PROJECT_SOURCE_DIR}/src/initialize.cpp)
-target_link_libraries(initialize PRIVATE # date::tz date::date
-                                         docopt_s Eigen3::Eigen CGAL::CGAL)
+target_link_libraries(initialize PRIVATE docopt_s Eigen3::Eigen CGAL::CGAL)
 # add_executable(cdt-opt ${PROJECT_SOURCE_DIR}/src/cdt-opt.cpp)
 # target_link_libraries( cdt-opt PRIVATE date::tz date::date Catch2::Catch2
 # Eigen3::Eigen # TBB::tbb CGAL::CGAL) target_compile_features(cdt-opt PRIVATE

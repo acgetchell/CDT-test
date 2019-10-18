@@ -9,11 +9,9 @@ environment:
 
 cache:
   - c:\tools\vcpkg\installed\
-  - c:\projects\dev
 
 
 image:
-#  - Visual Studio 2015
   - Visual Studio 2017
 
 skip_tags: true

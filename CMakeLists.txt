@@ -24,19 +24,23 @@ set(TBB_ON FALSE)
 # Threads
 set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
 
-# Compiler flags
+# gcc flags
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
   add_compile_options(
     -frounding-math -Wmisleading-indentation -Wduplicated-cond
     -Wduplicated-branches -Wlogical-op -Wuseless-cast)
 endif()
 
+# Turn off Visual Studio warnings, for now
 if(WIN32)
   if(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
     string(REGEX REPLACE "/W[0-4]" "/W0" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
   else()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W0")
   endif()
+else()
+  # Extra warnings for non-Visual Studio
+  add_compile_options(-Wall -Wno-comment)
 endif()
 # Turn off CGAL Triangulation Assertions and Postconditions
 add_definitions(-DCGAL_TRIANGULATION_NO_ASSERTIONS
@@ -48,9 +52,6 @@ set(CMAKE_CONFIGURATION_TYPES
     "Release" "Debug" "RelWithDebInfo"
     CACHE STRING "" FORCE)
 
-# Extra warnings
-add_compile_options(-Wall -Wno-comment)
-
 # Easier navigation in an IDE when projects are organized in folders.
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
@@ -58,8 +59,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 # Project  ##
 #
 
-# https://github.com/HowardHinnant/date
-#find_package(date CONFIG REQUIRED)
+# https://github.com/HowardHinnant/date find_package(date CONFIG REQUIRED)
 
 # https://github.com/catchorg/Catch2
 find_package(Catch2 CONFIG REQUIRED)
@@ -73,8 +73,7 @@ find_package(Boost REQUIRED)
 # https://eigen.tuxfamily.org/index.php?title=Main_Page
 find_package(Eigen3 CONFIG REQUIRED)
 
-# https://github.com/intel/tbb
-# find_package(TBB CONFIG REQUIRED)
+# https://github.com/intel/tbb find_package(TBB CONFIG REQUIRED)
 
 # https://github.com/CGAL/cgal
 find_package(CGAL CONFIG REQUIRED)
@@ -85,19 +84,14 @@ set(CGAL_DONT_OVERRIDE_CMAKE_FLAGS
 set(CGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE TRUE)
 
 include_directories(BEFORE ${PROJECT_SOURCE_DIR}/include
-    ${PROJECT_SOURCE_DIR}/external/pcg-cpp/include)
+                    ${PROJECT_SOURCE_DIR}/external/pcg-cpp/include)
 add_executable(initialize ${PROJECT_SOURCE_DIR}/src/initialize.cpp)
-target_link_libraries(initialize
-    PRIVATE
-    #date::tz date::date
-    docopt_s Eigen3::Eigen CGAL::CGAL)
-#add_executable(cdt-opt ${PROJECT_SOURCE_DIR}/src/cdt-opt.cpp)
-#target_link_libraries(
-#  cdt-opt
-#  PRIVATE date::tz date::date Catch2::Catch2 Eigen3::Eigen
-#          # TBB::tbb
-#          CGAL::CGAL)
-#target_compile_features(cdt-opt PRIVATE cxx_std_17)
+target_link_libraries(initialize PRIVATE # date::tz date::date
+                                         docopt_s Eigen3::Eigen CGAL::CGAL)
+# add_executable(cdt-opt ${PROJECT_SOURCE_DIR}/src/cdt-opt.cpp)
+# target_link_libraries( cdt-opt PRIVATE date::tz date::date Catch2::Catch2
+# Eigen3::Eigen # TBB::tbb CGAL::CGAL) target_compile_features(cdt-opt PRIVATE
+# cxx_std_17)
 
 #
 # Tests    ##
@@ -107,13 +101,11 @@ target_link_libraries(initialize
 enable_testing()
 add_subdirectory(tests)
 
-# CTest basic testing
-# Parameter initializer program
+# CTest basic testing Parameter initializer program
 add_test(NAME CDT-Initialize COMMAND $<TARGET_FILE:initialize>)
-set_tests_properties(CDT-Initialize
-    PROPERTIES PASS_REGULAR_EXPRESSION "Usage:./initialize")
+set_tests_properties(CDT-Initialize PROPERTIES PASS_REGULAR_EXPRESSION
+                                               "Usage:./initialize")
 
-#add_test(NAME CDT-Opt COMMAND $<TARGET_FILE:cdt-opt>)
-#set_tests_properties(
-#  CDT-Opt PROPERTIES PASS_REGULAR_EXPRESSION
-#                     "64000 simplices on 16 timeslices desired.")
+# add_test(NAME CDT-Opt COMMAND $<TARGET_FILE:cdt-opt>) set_tests_properties(
+# CDT-Opt PROPERTIES PASS_REGULAR_EXPRESSION "64000 simplices on 16 timeslices
+# desired.")

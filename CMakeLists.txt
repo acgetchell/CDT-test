@@ -84,7 +84,11 @@ set(CGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE TRUE)
 include_directories(BEFORE ${PROJECT_SOURCE_DIR}/include
                     ${PROJECT_SOURCE_DIR}/external/pcg-cpp/include)
 add_executable(initialize ${PROJECT_SOURCE_DIR}/src/initialize.cpp)
-target_link_libraries(initialize PRIVATE docopt_s Eigen3::Eigen CGAL::CGAL)
+if (WIN32)
+  target_link_libraries(initialize PRIVATE docopt Eigen3::Eigen CGAL::CGAL)
+else()
+  target_link_libraries(initialize PRIVATE docopt_s Eigen3::Eigen CGAL::CGAL)
+endif ()
 # add_executable(cdt-opt ${PROJECT_SOURCE_DIR}/src/cdt-opt.cpp)
 # target_link_libraries( cdt-opt PRIVATE date::tz date::date Catch2::Catch2
 # Eigen3::Eigen # TBB::tbb CGAL::CGAL) target_compile_features(cdt-opt PRIVATE

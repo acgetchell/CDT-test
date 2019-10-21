@@ -55,7 +55,7 @@ This builds from source, so it will take awhile. To use these successfully, you'
 -DCMAKE_TOOLCHAIN_FILE=$HOME/vcpkg/scripts/buildsystems/vcpkg.cmake
 ```
 
-N.B. So close to building on Windows!
+N.B.
 
 - As of 2018-11-29, the [vcpkg] formula for [date] is [broken][1], so I removed reliance on that library.
 Hopefully it will be back in C++20!
@@ -65,7 +65,8 @@ But it speeds up triangulations by a factor of 3, so it would be great to be abl
 
 - As of 2019-10-16 [vcpkg] doesn't [build][3] on macOS 10.14 (but does on 10.15).
 
-- As of 2019-10-18 the [vcpkg] package for [docopt] is [broken][4] on Windows (but not Linux). 
+- As of 2019-10-18 the [vcpkg] package for [docopt] has different [targets][4] on Windows vs. macOS
+and Linux, which can be [worked around][5]. 
 
 
 [CDT-plusplus]:https://github.com/acgetchell/CDT-plusplus
@@ -89,3 +90,4 @@ But it speeds up triangulations by a factor of 3, so it would be great to be abl
 [docopt]: https://github.com/docopt/docopt.cpp
 [ms-gsl]: https://github.com/microsoft/GSL
 [4]: https://github.com/microsoft/vcpkg/issues/8666
+[5]: https://github.com/acgetchell/CDT-test/commit/e1b0dd098e7c60977c3e321eda8a1dd3132e3508

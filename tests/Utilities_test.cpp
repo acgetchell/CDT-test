@@ -14,51 +14,64 @@
 
 using namespace std;
 
-SCENARIO("Various string/stream/time utilities", "[utility]") {
-  GIVEN("A topology_type") {
+SCENARIO("Various string/stream/time utilities", "[utility]")
+{
+  GIVEN("A topology_type")
+  {
     auto constexpr this_topology = topology_type::SPHERICAL;
-    WHEN("Operator<< is invoked.") {
+    WHEN("Operator<< is invoked.")
+    {
       std::stringstream buffer;
       std::cout.rdbuf(buffer.rdbuf());
       std::cout << this_topology;
-      THEN("The output is correct.") {
+      THEN("The output is correct.")
+      {
         CHECK_THAT(buffer.str(), Catch::Equals("spherical"));
       }
     }
   }
-  GIVEN("A running environment") {
-    WHEN("The user is requested.") {
+  GIVEN("A running environment")
+  {
+    WHEN("The user is requested.")
+    {
       auto const result = getEnvVar("USER");
-      THEN("The output is correct.") {
+      THEN("The output is correct.")
+      {
         // Enter your own USER environment variable here
         CHECK_THAT(result, Catch::Equals("adam") || Catch::Equals("travis"));
       }
     }
-    WHEN("The hostname is requested.") {
+    WHEN("The hostname is requested.")
+    {
       // Set OS type to Windows so we know the hostname
-      THEN("The output is correct.") {
+      THEN("The output is correct.")
+      {
         CHECK_THAT(hostname(), Catch::Contains("hapkido") ||
                                    Catch::Contains("production") ||
                                    Catch::Contains("dewitt"));
       }
     }
-    WHEN("The current time is requested.") {
-      THEN("The output is correct.") {
+    WHEN("The current time is requested.")
+    {
+      THEN("The output is correct.")
+      {
         // Update test yearly
         CHECK_THAT(currentDateTime(), Catch::Contains("2019"));
         // Human verification
         std::cout << currentDateTime() << "\n";
       }
     }
-    WHEN("A filename is generated.") {
+    WHEN("A filename is generated.")
+    {
       auto constexpr this_topology = topology_type::SPHERICAL;
-      auto constexpr dimensions = static_cast<int_fast32_t>(3);
-      auto constexpr simplices = static_cast<int_fast32_t>(6700);
-      auto constexpr timeslices = static_cast<int_fast32_t>(16);
+      auto constexpr dimensions    = static_cast<int_fast32_t>(3);
+      auto constexpr simplices     = static_cast<int_fast32_t>(6700);
+      auto constexpr timeslices    = static_cast<int_fast32_t>(16);
       auto const filename =
           generate_filename(this_topology, dimensions, simplices, timeslices);
       /// TODO: Fix intermittent Segfault here
-      THEN("The output is correct.") {
+      THEN("The output is correct.")
+      {
         CHECK_THAT(filename,
                    Catch::Contains("S3") && Catch::Contains("16") &&
                        Catch::Contains("6700") && Catch::Contains("@") &&
@@ -70,29 +83,38 @@ SCENARIO("Various string/stream/time utilities", "[utility]") {
   }
 }
 
-SCENARIO("Printing results", "[utility]") {
+SCENARIO("Printing results", "[utility]")
+{
   // redirect std::cout
   std::stringstream buffer;
   std::cout.rdbuf(buffer.rdbuf());
-  GIVEN("A Manifold3") {
+  GIVEN("A Manifold3")
+  {
     Manifold3 manifold(640, 4);
-    WHEN("We want to print statistics on a manifold.") {
-      THEN("Statistics are successfully printed.") {
+    WHEN("We want to print statistics on a manifold.")
+    {
+      THEN("Statistics are successfully printed.")
+      {
         print_manifold(manifold);
         CHECK_THAT(buffer.str(), Catch::Contains("Manifold has"));
       }
     }
-    WHEN("We want to print details on simplices and sub-simplices.") {
-      THEN("Simplicial details are successfully printed.") {
+    WHEN("We want to print details on simplices and sub-simplices.")
+    {
+      THEN("Simplicial details are successfully printed.")
+      {
         print_manifold_details(manifold);
         CHECK_THAT(buffer.str(), Catch::Contains("There are"));
       }
     }
   }
-  GIVEN("A FoliatedTriangulation3") {
+  GIVEN("A FoliatedTriangulation3")
+  {
     FoliatedTriangulation3 triangulation(640, 4);
-    WHEN("We want to print statistics on the triangulation.") {
-      THEN("Statistics are successfully printed.") {
+    WHEN("We want to print statistics on the triangulation.")
+    {
+      THEN("Statistics are successfully printed.")
+      {
         print_triangulation(triangulation);
         CHECK_THAT(buffer.str(), Catch::Contains("Triangulation has"));
       }
@@ -100,45 +122,52 @@ SCENARIO("Printing results", "[utility]") {
   }
 }
 
-SCENARIO("Randomizing functions", "[utility]") {
-  GIVEN("A PCG die roller") {
-    WHEN("We roll a die twice.") {
+SCENARIO("Randomizing functions", "[utility]")
+{
+  GIVEN("A PCG die roller")
+  {
+    WHEN("We roll a die twice.")
+    {
       auto const roll1 = die_roll();
       auto const roll2 = die_roll();
-      THEN("They should probably be different.") {
+      THEN("They should probably be different.")
+      {
         CHECK_FALSE(roll1 == roll2);
       }
     }
   }
-  GIVEN("A container of ints") {
+  GIVEN("A container of ints")
+  {
     std::vector<int> v(50);
     std::iota(v.begin(), v.end(), 0);
-    WHEN("The container is shuffled.") {
+    WHEN("The container is shuffled.")
+    {
       std::shuffle(v.begin(), v.end(), make_random_generator());
-      THEN("We get back the elements in random order.") {
+      THEN("We get back the elements in random order.")
+      {
         auto j = 0;
-        for (auto i : v) {
-          CHECK(i != j++);
-        }
+        for (auto i : v) { CHECK(i != j++); }
         cout << "\n";
         cout << "Shuffled container verification:\n";
-        for (auto i : v)
-          cout << i << " ";
+        for (auto i : v) cout << i << " ";
         cout << "\n";
       }
     }
   }
-  GIVEN("A test range of integers") {
-    WHEN("We generate six different random integers within the range.") {
+  GIVEN("A test range of integers")
+  {
+    WHEN("We generate six different random integers within the range.")
+    {
       auto constexpr min = static_cast<int_fast32_t>(64);
       auto constexpr max = static_cast<int_fast32_t>(6400);
-      auto const value1 = generate_random_int(min, max);
-      auto const value2 = generate_random_int(min, max);
-      auto const value3 = generate_random_int(min, max);
-      auto const value4 = generate_random_int(min, max);
-      auto const value5 = generate_random_int(min, max);
-      auto const value6 = generate_random_int(min, max);
-      THEN("They should all fall within the range and all be different.") {
+      auto const value1  = generate_random_int(min, max);
+      auto const value2  = generate_random_int(min, max);
+      auto const value3  = generate_random_int(min, max);
+      auto const value4  = generate_random_int(min, max);
+      auto const value5  = generate_random_int(min, max);
+      auto const value6  = generate_random_int(min, max);
+      THEN("They should all fall within the range and all be different.")
+      {
         CHECK(value1 >= min);
         CHECK(value1 <= max);
         CHECK(value2 >= min);
@@ -169,16 +198,19 @@ SCENARIO("Randomizing functions", "[utility]") {
       }
     }
   }
-  GIVEN("A test range of timeslices") {
-    WHEN("We generate six different timeslices within the range.") {
+  GIVEN("A test range of timeslices")
+  {
+    WHEN("We generate six different timeslices within the range.")
+    {
       auto constexpr max = static_cast<int_fast32_t>(256);
-      auto const value1 = generate_random_timeslice(max);
-      auto const value2 = generate_random_timeslice(max);
-      auto const value3 = generate_random_timeslice(max);
-      auto const value4 = generate_random_timeslice(max);
-      auto const value5 = generate_random_timeslice(max);
-      auto const value6 = generate_random_timeslice(max);
-      THEN("They should all fall within the range and be different.") {
+      auto const value1  = generate_random_timeslice(max);
+      auto const value2  = generate_random_timeslice(max);
+      auto const value3  = generate_random_timeslice(max);
+      auto const value4  = generate_random_timeslice(max);
+      auto const value5  = generate_random_timeslice(max);
+      auto const value6  = generate_random_timeslice(max);
+      THEN("They should all fall within the range and be different.")
+      {
         CHECK(value1 >= 1);
         CHECK(value1 <= max);
         CHECK(value2 >= 1);
@@ -209,19 +241,24 @@ SCENARIO("Randomizing functions", "[utility]") {
       }
     }
   }
-  GIVEN("The range between 0 and 1, inclusive") {
-    WHEN("We generate a random real number.") {
+  GIVEN("The range between 0 and 1, inclusive")
+  {
+    WHEN("We generate a random real number.")
+    {
       auto constexpr min = static_cast<long double>(0.0);
       auto constexpr max = static_cast<long double>(1.0);
-      auto const value = generate_random_real(min, max);
-      THEN("The real number should lie within that range.") {
+      auto const value   = generate_random_real(min, max);
+      THEN("The real number should lie within that range.")
+      {
         REQUIRE(min <= value);
         REQUIRE(value <= max);
       }
     }
   }
-  GIVEN("A probability generator") {
-    WHEN("We generate six probabilities.") {
+  GIVEN("A probability generator")
+  {
+    WHEN("We generate six probabilities.")
+    {
       auto const value1 = generate_probability();
       auto const value2 = generate_probability();
       auto const value3 = generate_probability();
@@ -229,7 +266,8 @@ SCENARIO("Randomizing functions", "[utility]") {
       auto const value5 = generate_probability();
       auto const value6 = generate_probability();
 
-      THEN("They should all be different.") {
+      THEN("They should all be different.")
+      {
         CHECK_FALSE(value1 == value2);
         CHECK_FALSE(value1 == value3);
         CHECK_FALSE(value1 == value4);
@@ -250,42 +288,58 @@ SCENARIO("Randomizing functions", "[utility]") {
   }
 }
 
-SCENARIO("Expected points per timeslice", "[utility]") {
-  GIVEN("Simplices and timeslices for various foliations") {
-    WHEN("We request 2 simplices on 2 timeslices.") {
-      THEN("The results are correct.") {
+SCENARIO("Expected points per timeslice", "[utility]")
+{
+  GIVEN("Simplices and timeslices for various foliations")
+  {
+    WHEN("We request 2 simplices on 2 timeslices.")
+    {
+      THEN("The results are correct.")
+      {
         REQUIRE(expected_points_per_timeslice(3, 2, 2, true) == 2);
       }
     }
-    WHEN("We request 500 simplices on 4 timeslices.") {
-      THEN("The results are correct.") {
+    WHEN("We request 500 simplices on 4 timeslices.")
+    {
+      THEN("The results are correct.")
+      {
         REQUIRE(expected_points_per_timeslice(3, 500, 4, true) == 50);
       }
     }
-    WHEN("We request 5000 simplices on 8 timeslices.") {
-      THEN("The results are correct.") {
+    WHEN("We request 5000 simplices on 8 timeslices.")
+    {
+      THEN("The results are correct.")
+      {
         REQUIRE(expected_points_per_timeslice(3, 5000, 8, true) == 125);
       }
     }
-    WHEN("We request 64,000 simplices on 16 timeslices.") {
-      THEN("The results are correct.") {
+    WHEN("We request 64,000 simplices on 16 timeslices.")
+    {
+      THEN("The results are correct.")
+      {
         REQUIRE(expected_points_per_timeslice(3, 64000, 16, true) == 600);
       }
     }
-    WHEN("We request 640,000 simplices on 64 timeslices.") {
-      THEN("The results are correct.") {
+    WHEN("We request 640,000 simplices on 64 timeslices.")
+    {
+      THEN("The results are correct.")
+      {
         REQUIRE(expected_points_per_timeslice(3, 640000, 64, true) == 1000);
       }
     }
   }
 }
 
-SCENARIO("Exact number (Gmqpzf) conversion", "[utility]") {
-  GIVEN("A number not exactly representable in binary") {
+SCENARIO("Exact number (Gmqpzf) conversion", "[utility]")
+{
+  GIVEN("A number not exactly representable in binary")
+  {
     Gmpzf value = 0.17;
-    WHEN("We convert it to double.") {
+    WHEN("We convert it to double.")
+    {
       auto const converted_value = Gmpzf_to_double(value);
-      THEN("It should be exact when converted back from double to Gmpzf.") {
+      THEN("It should be exact when converted back from double to Gmpzf.")
+      {
         REQUIRE(value == Gmpzf(converted_value));
       }
     }

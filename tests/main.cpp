@@ -13,14 +13,16 @@
 #define CATCH_CONFIG_CPP17_STRING_VIEW
 #include <catch2/catch.hpp>
 
-int main(int argc, char *argv[]) {
-  Catch::Session session; // There must be exactly one instance
+int main(int argc, char* argv[])
+{
+  Catch::Session session;  // There must be exactly one instance
 
   // writing to session.configData() here sets defaults
   // this is the preferred way to set them
 
   int returnCode = session.applyCommandLine(argc, argv);
-  if (returnCode != 0) { // Indicates a command line error
+  if (returnCode != 0)
+  {  // Indicates a command line error
     return returnCode;
   }
 

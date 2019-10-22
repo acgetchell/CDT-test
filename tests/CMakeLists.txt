@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.11)
 
 add_executable(CDT_test ${PROJECT_SOURCE_DIR}/tests/main.cpp
     Geometry_test.cpp
+    Manifold_test.cpp
     Tetrahedron_test.cpp
     Utilities_test.cpp
     VertexTest.cpp

@@ -14,10 +14,14 @@
 using namespace std;
 
 SCENARIO("3-Geometry std::function compatibility and exception-safety",
-         "[geometry]") {
-  GIVEN("A 3-dimensional geometry.") {
-    WHEN("It's properties are examined.") {
-      THEN("It is default constructible.") {
+         "[geometry]")
+{
+  GIVEN("A 3-dimensional geometry.")
+  {
+    WHEN("It's properties are examined.")
+    {
+      THEN("It is default constructible.")
+      {
         REQUIRE(is_default_constructible<Geometry3>::value);
       }
       /// TODO: Make Geometry no-throw default constructible
@@ -25,42 +29,53 @@ SCENARIO("3-Geometry std::function compatibility and exception-safety",
       //            {
       //              CHECK(is_nothrow_default_constructible<Geometry3>::value);
       //            }
-      THEN("It is no-throw destructible.") {
+      THEN("It is no-throw destructible.")
+      {
         REQUIRE(is_nothrow_destructible<Geometry3>::value);
       }
-      THEN("It is copy constructible.") {
+      THEN("It is copy constructible.")
+      {
         REQUIRE(is_copy_constructible<Geometry3>::value);
         cout << "std::function<Geometry> supported:" << boolalpha
              << is_copy_constructible<Geometry3>::value << "\n";
       }
-      THEN("It is no-throw copy constructible.") {
+      THEN("It is no-throw copy constructible.")
+      {
         CHECK(is_nothrow_copy_constructible<Geometry3>::value);
       }
-      THEN("It is no-throw copy assignable.") {
+      THEN("It is no-throw copy assignable.")
+      {
         CHECK(is_nothrow_copy_assignable<Geometry3>::value);
       }
-      THEN("It is move constructible.") {
+      THEN("It is move constructible.")
+      {
         REQUIRE(is_move_constructible<Geometry3>::value);
       }
-      THEN("It is no-throw move constructible.") {
+      THEN("It is no-throw move constructible.")
+      {
         REQUIRE(is_nothrow_move_constructible<Geometry3>::value);
       }
-      THEN("It is no-throw move assignable.") {
+      THEN("It is no-throw move assignable.")
+      {
         REQUIRE(is_nothrow_move_assignable<Geometry3>::value);
       }
     }
   }
 }
 
-SCENARIO("3-Geometry classification", "[geometry]") {
-  GIVEN("A small 3-dimensional geometry.") {
-    WHEN("It is constructed with a Delaunay triangulation.") {
-      auto constexpr desired_simplices = static_cast<int_fast32_t>(72);
+SCENARIO("3-Geometry classification", "[geometry]")
+{
+  GIVEN("A small 3-dimensional geometry.")
+  {
+    WHEN("It is constructed with a Delaunay triangulation.")
+    {
+      auto constexpr desired_simplices  = static_cast<int_fast32_t>(72);
       auto constexpr desired_timeslices = static_cast<int_fast32_t>(3);
       FoliatedTriangulation3 triangulation(desired_simplices,
                                            desired_timeslices);
-      Geometry3 geometry(triangulation);
-      THEN("The Delaunay triangulation is described by the geometry.") {
+      Geometry3              geometry(triangulation);
+      THEN("The Delaunay triangulation is described by the geometry.")
+      {
         cout << "There are " << geometry.N3 << " simplices ...\n";
         cout << "There are " << geometry.N3_31 << " (3,1) simplices and "
              << geometry.N3_22 << " (2,2) simplices and " << geometry.N3_13
@@ -94,11 +109,15 @@ SCENARIO("3-Geometry classification", "[geometry]") {
   }
 }
 
-SCENARIO("3-Geometry initialization", "[geometry]") {
-  GIVEN("A 3-dimensional geometry.") {
-    WHEN("It is default constructed.") {
+SCENARIO("3-Geometry initialization", "[geometry]")
+{
+  GIVEN("A 3-dimensional geometry.")
+  {
+    WHEN("It is default constructed.")
+    {
       Geometry3 geometry;
-      THEN("All data members are zero-initialized.") {
+      THEN("All data members are zero-initialized.")
+      {
         REQUIRE(geometry.N3 == 0);
         REQUIRE(geometry.N3_31 == 0);
         REQUIRE(geometry.N3_13 == 0);
@@ -110,14 +129,17 @@ SCENARIO("3-Geometry initialization", "[geometry]") {
         REQUIRE(geometry.N0 == 0);
       }
     }
-    WHEN("It is constructed with a Delaunay triangulation.") {
-      auto constexpr desired_simplices = static_cast<int_fast32_t>(640);
+    WHEN("It is constructed with a Delaunay triangulation.")
+    {
+      auto constexpr desired_simplices  = static_cast<int_fast32_t>(640);
       auto constexpr desired_timeslices = static_cast<int_fast32_t>(4);
       FoliatedTriangulation3 triangulation(desired_simplices,
                                            desired_timeslices);
-      Geometry3 geometry(triangulation);
-      THEN("The properties of the Delaunay triangulation are saved in geometry "
-           "info.") {
+      Geometry3              geometry(triangulation);
+      THEN(
+          "The properties of the Delaunay triangulation are saved in geometry "
+          "info.")
+      {
         CHECK(geometry.N3 == triangulation.number_of_finite_cells());
         CHECK(geometry.N3_31 == triangulation.get_three_one().size());
         CHECK(geometry.N3_13 == triangulation.get_one_three().size());

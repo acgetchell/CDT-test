@@ -116,10 +116,11 @@ inline std::ostream& operator<<(std::ostream& os, topology_type const& topology)
 //}
 
 /// @brief Return the current date and time
-inline std::string currentDateTime() {
+inline std::string currentDateTime()
+{
   std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
-  std::time_t now_c = std::chrono::system_clock::to_time_t(now);
-  auto result_c = std::put_time(std::localtime(&now_c), "%Y-%m-%d.%X%Z");
+  std::time_t now_c    = std::chrono::system_clock::to_time_t(now);
+  auto        result_c = std::put_time(std::localtime(&now_c), "%Y-%m-%d.%X%Z");
   std::ostringstream result_s;
   result_s << result_c;
   std::string result = result_s.str();
@@ -410,8 +411,7 @@ template <typename FloatingPointType>
       static_cast<int_fast64_t>(simplices / timeslices);
   switch (dimension)
   {
-    case 3:
-    {
+    case 3: {
       // Avoid segfaults for small values
       if (simplices == timeslices) { return 2 * simplices_per_timeslice; }
       else if (simplices < 1000)
@@ -431,8 +431,7 @@ template <typename FloatingPointType>
         return static_cast<int_fast64_t>(0.1 * simplices_per_timeslice);
       }
     }
-    default:
-    {
+    default: {
       throw std::invalid_argument("Currently, dimensions cannot be >3.");
     }
   }

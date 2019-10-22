@@ -84,6 +84,9 @@ set(CGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE TRUE)
 include_directories(BEFORE ${PROJECT_SOURCE_DIR}/include
                     ${PROJECT_SOURCE_DIR}/external/pcg-cpp/include)
 add_executable(initialize ${PROJECT_SOURCE_DIR}/src/initialize.cpp)
+
+# On macOS and Linux docopt builds an intermediate object, thus different targets than Windows
+# See https://github.com/microsoft/vcpkg/issues/8666
 if (WIN32)
   target_link_libraries(initialize PRIVATE docopt Eigen3::Eigen CGAL::CGAL)
 else()

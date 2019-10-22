@@ -94,7 +94,7 @@ build_script:
   - cmake --build .
 
 on_success:
-  - ps: cmake --build . --target test
+  - cmake --build . --target test & exit 0
 
 notifications:
   - provider: Email

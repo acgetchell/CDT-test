@@ -22,7 +22,8 @@ cd vcpkg
 
 Note that this helpfully installs up to date versions of [CMake] and [Ninja].
 
-You will also need to install `yasm` so that `vcpkg` can install [mpir], which is required for [CGAL].
+On non-Windows platforms, you will also need to install `yasm` so that `vcpkg` can install [mpir],
+which is required for [CGAL].
 
 MacOS using [homebrew]:
 

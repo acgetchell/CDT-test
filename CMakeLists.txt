@@ -5,6 +5,14 @@ project(
   VERSION 0.1.0
   LANGUAGES CXX)
 
+if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
+  message(
+    FATAL_ERROR
+      "Do not build in-source.
+                       Please remove CMakeCache.txt and the CMakeFiles/ directory. Then build out-of-source."
+  )
+endif()
+
 #
 # OPTIONS  ##
 #
@@ -85,13 +93,15 @@ include_directories(BEFORE ${PROJECT_SOURCE_DIR}/include
                     ${PROJECT_SOURCE_DIR}/external/pcg-cpp/include)
 add_executable(initialize ${PROJECT_SOURCE_DIR}/src/initialize.cpp)
 
-# On macOS and Linux docopt builds an intermediate object, thus different targets than Windows
-# See https://github.com/microsoft/vcpkg/issues/8666
-if (WIN32)
+# On macOS and Linux docopt builds an intermediate object, thus different
+# targets than Windows See https://github.com/microsoft/vcpkg/issues/8666
+if(WIN32)
   target_link_libraries(initialize PRIVATE docopt Eigen3::Eigen CGAL::CGAL)
 else()
   target_link_libraries(initialize PRIVATE docopt_s Eigen3::Eigen CGAL::CGAL)
-endif ()
+endif()
+target_compile_features(initialize PRIVATE cxx_std_17)
+
 # add_executable(cdt-opt ${PROJECT_SOURCE_DIR}/src/cdt-opt.cpp)
 # target_link_libraries( cdt-opt PRIVATE date::tz date::date Catch2::Catch2
 # Eigen3::Eigen # TBB::tbb CGAL::CGAL) target_compile_features(cdt-opt PRIVATE

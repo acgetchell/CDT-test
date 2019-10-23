@@ -217,6 +217,7 @@ SCENARIO("3-Manifold initialization", "[manifold]")
 
 SCENARIO("3-Manifold function checks", "[manifold]")
 {
+  /// TODO: Fix is_infinte and is_vertex from cells container
   GIVEN("The default manifold from the default triangulation")
   {
     Manifold3 manifold;
@@ -419,7 +420,7 @@ SCENARIO("3-Manifold validation and fixing", "[manifold][!mayfail]")
     Delaunay3              dt(cv.begin(), cv.end());
     FoliatedTriangulation3 ft(dt);
     Manifold3              manifold(ft);
-    /// TODO: Rethink or refactor getting vertices from cells
+    /// TODO: Fix is_infinte and is_vertex from cells container
     WHEN("We ask for a container of vertices given a container of cells.")
     {
       auto&& vertices = manifold.get_vertices_from_cells(

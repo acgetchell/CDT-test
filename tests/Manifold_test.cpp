@@ -225,7 +225,7 @@ SCENARIO("3-Manifold function checks", "[manifold]")
     {
       auto vertices =
           manifold.get_triangulation().get_delaunay().tds().vertices();
-      auto vertex = static_cast<Vertex_handle>(vertices.begin());
+      auto vertex = vertices.begin();
       cout << boolalpha
            << "The single vertex is a vertex: " << manifold.is_vertex(vertex)
            << "\n";

@@ -39,12 +39,12 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     -Wduplicated-branches -Wlogical-op -Wuseless-cast)
 endif()
 
-# Turn off Visual Studio warnings, for now
+# Turn on Visual Studio warnings
 if(WIN32)
   if(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
-    string(REGEX REPLACE "/W[0-4]" "/W0" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+    string(REGEX REPLACE "/W[0-4]" "/W4" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
   else()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W0")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
   endif()
 else()
   # Extra warnings for non-Visual Studio

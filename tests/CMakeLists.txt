@@ -5,6 +5,7 @@ add_executable(CDT_test ${PROJECT_SOURCE_DIR}/tests/main.cpp
     Geometry_test.cpp
     Manifold_test.cpp
     S3ActionTest.cpp
+    SphereTest.cpp
     Tetrahedron_test.cpp
     Torus_test.cpp
     Utilities_test.cpp

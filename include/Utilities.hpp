@@ -407,8 +407,7 @@ template <typename FloatingPointType>
               << " timeslices desired.\n";
   }
 
-  auto const simplices_per_timeslice =
-      static_cast<int_fast64_t>(simplices / timeslices);
+  auto const simplices_per_timeslice = simplices / timeslices;
   switch (dimension)
   {
     case 3: {

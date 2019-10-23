@@ -4,6 +4,7 @@ add_executable(CDT_test ${PROJECT_SOURCE_DIR}/tests/main.cpp
     Ergodic_moves_3_test.cpp
     Geometry_test.cpp
     Manifold_test.cpp
+    Move_command_test.cpp
     S3ActionTest.cpp
     SphereTest.cpp
     Tetrahedron_test.cpp

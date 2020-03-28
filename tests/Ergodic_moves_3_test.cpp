@@ -17,8 +17,8 @@ SCENARIO("Perform ergodic moves on 2+1 triangulations", "[ergodic moves]")
 {
   GIVEN("A 2+1-dimensional foliated triangulation")
   {
-    constexpr auto desired_simplices  = static_cast<int_fast32_t>(6400);
-    constexpr auto desired_timeslices = static_cast<int_fast32_t>(7);
+    constexpr auto desired_simplices  = static_cast<Int_precision>(6400);
+    constexpr auto desired_timeslices = static_cast<Int_precision>(7);
     Manifold3      manifold(desired_simplices, desired_timeslices);
     REQUIRE(manifold.is_delaunay());
     REQUIRE(manifold.is_valid());
@@ -33,7 +33,8 @@ SCENARIO("Perform ergodic moves on 2+1 triangulations", "[ergodic moves]")
     auto manifold_before = manifold;
     WHEN("A (2,3) move is performed")
     {
-      manifold = std::move(manifold3_moves::do_23_move(manifold));
+      // Use copy elision
+      manifold = manifold3_moves::do_23_move(manifold);
       THEN("The move is correct and the manifold invariants are maintained")
       {
         // Update Geometry and Foliated_triangulation with new info

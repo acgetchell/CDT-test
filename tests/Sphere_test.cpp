@@ -5,7 +5,7 @@
 /// Tests that 2-spheres and 3-spheres are correctly constructed
 /// in 3D and 4D respectively.
 
-/// @file SphereTest.cpp
+/// @file Sphere_test.cpp
 /// @brief Tests for spheres
 /// @author Adam Getchell
 
@@ -26,7 +26,7 @@ SCENARIO("Construct a higher-dimensional 3-sphere", "[sphere]")
       THEN("We have the correct number of points.")
       {
         REQUIRE(points.size() == number_of_points);
-        std::cout << "3-sphere has " << number_of_points << " points.\n";
+        fmt::print("3-sphere has {} points.\n", number_of_points);
       }
     }
   }

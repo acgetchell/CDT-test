@@ -9,7 +9,7 @@
 /// @brief Tests for foliated triangulations
 /// @author Adam Getchell
 
-#include <Foliated_triangulation.hpp>
+#include "Foliated_triangulation.hpp"
 #include <catch2/catch.hpp>
 
 using namespace std;
@@ -75,26 +75,26 @@ SCENARIO("FoliatedTriangulation3 functions from Delaunay3", "[triangulation]")
   {
     WHEN("Constructing a small triangulation.")
     {
-      constexpr auto         desired_simplices  = static_cast<int_fast32_t>(72);
-      constexpr auto         desired_timeslices = static_cast<int_fast32_t>(3);
+      constexpr auto         desired_simplices = static_cast<Int_precision>(72);
+      constexpr auto         desired_timeslices = static_cast<Int_precision>(3);
       FoliatedTriangulation3 triangulation(desired_simplices,
                                            desired_timeslices);
       THEN("Delaunay3 functions work as expected.")
       {
         CHECK(triangulation.number_of_finite_cells() > 12);
-        std::cout << "Base Delaunay number of cells is : "
-                  << triangulation.number_of_finite_cells() << "\n";
+        fmt::print("Base Delaunay number of cells: {}\n",
+                   triangulation.number_of_finite_cells());
         CHECK(triangulation.number_of_finite_facets() > 24);
-        std::cout << "Base Delaunay number of faces is : "
-                  << triangulation.number_of_finite_facets() << "\n";
+        fmt::print("Base Delaunay number of faces: {}\n",
+                   triangulation.number_of_finite_facets());
         triangulation.print_volume_per_timeslice();
         CHECK(triangulation.number_of_finite_edges() > 24);
-        std::cout << "Base Delaunay number of edges is : "
-                  << triangulation.number_of_finite_edges() << "\n";
+        fmt::print("Base Delaunay number of edges: {}\n",
+                   triangulation.number_of_finite_edges());
         triangulation.print_edges();
         CHECK(triangulation.number_of_vertices() > 12);
-        std::cout << "Base Delaunay number of vertices is: "
-                  << triangulation.number_of_vertices() << "\n";
+        fmt::print("Base Delaunay number of vertices: {}\n",
+                   triangulation.number_of_vertices());
         CHECK(triangulation.dimension() == 3);
         std::cout << "Base Delaunay dimension is : "
                   << triangulation.dimension() << "\n";
@@ -132,10 +132,6 @@ SCENARIO("FoliatedTriangulation3 initialization", "[triangulation]")
                      [](Delaunay3::Point a, std::size_t b) {
                        return std::make_pair(a, b);
                      });
-      //      for (gsl::index j = 0; j < 4; ++j) {
-      //        causal_vertices.emplace_back(std::make_pair(Vertices[j],
-      //        timevalue[j]));
-      //      }
       Delaunay3 triangulation(causal_vertices.begin(), causal_vertices.end());
       FoliatedTriangulation3 foliatedTriangulation(triangulation);
       THEN("Triangulation is valid and foliated.")
@@ -157,8 +153,8 @@ SCENARIO("FoliatedTriangulation3 initialization", "[triangulation]")
     }
     WHEN("Constructing the minimum triangulation.")
     {
-      constexpr auto         desired_simplices  = static_cast<int_fast32_t>(2);
-      constexpr auto         desired_timeslices = static_cast<int_fast32_t>(2);
+      constexpr auto         desired_simplices  = static_cast<Int_precision>(2);
+      constexpr auto         desired_timeslices = static_cast<Int_precision>(2);
       FoliatedTriangulation3 foliatedTriangulation(desired_simplices,
                                                    desired_timeslices);
       THEN("Triangulation is valid and foliated.")
@@ -182,8 +178,8 @@ SCENARIO("FoliatedTriangulation3 initialization", "[triangulation]")
     }
     WHEN("Constructing a medium triangulation.")
     {
-      constexpr auto desired_simplices  = static_cast<int_fast32_t>(6400);
-      constexpr auto desired_timeslices = static_cast<int_fast32_t>(7);
+      constexpr auto desired_simplices  = static_cast<Int_precision>(6400);
+      constexpr auto desired_timeslices = static_cast<Int_precision>(7);
       FoliatedTriangulation3 triangulation(desired_simplices,
                                            desired_timeslices);
       THEN("Triangulation is valid and foliated.")
@@ -221,14 +217,15 @@ SCENARIO("FoliatedTriangulation3 initialization", "[triangulation]")
         CHECK(triangulation.min_time() > 0);
         CHECK(triangulation.max_time() > triangulation.min_time());
         // Human verification
-        cout << "There are " << triangulation.number_of_finite_edges()
-             << " edges.\n";
-        cout << "There are " << triangulation.N1_TL() << " timelike edges and "
-             << triangulation.N1_SL() << " spacelike edges.\n";
-        //        triangulation.print_edges();
-        cout << "There are " << triangulation.number_of_vertices()
-             << " vertices with a max timevalue of " << triangulation.max_time()
-             << " and a min timevalue of " << triangulation.min_time() << ".\n";
+        fmt::print("There are {} edges.\n",
+                   triangulation.number_of_finite_edges());
+        fmt::print("There are {} timelike edges and {} spacelike edges.\n",
+                   triangulation.N1_TL(), triangulation.N1_SL());
+        fmt::print(
+            "There are {} vertices with a max timevalue of {} and a min "
+            "timevalue of {}.\n",
+            triangulation.number_of_vertices(), triangulation.max_time(),
+            triangulation.min_time());
         triangulation.print_volume_per_timeslice();
         for (auto const& edge : triangulation.get_timelike_edges())
         { CHECK(triangulation.classify_edge(edge)); }
@@ -243,8 +240,8 @@ SCENARIO("FoliatedTriangulation3 copying", "[triangulation]")
 {
   GIVEN("A FoliatedTriangulation3")
   {
-    constexpr auto         desired_simplices  = static_cast<int_fast32_t>(6400);
-    constexpr auto         desired_timeslices = static_cast<int_fast32_t>(7);
+    constexpr auto         desired_simplices = static_cast<Int_precision>(6400);
+    constexpr auto         desired_timeslices = static_cast<Int_precision>(7);
     FoliatedTriangulation3 triangulation(desired_simplices, desired_timeslices);
     WHEN("It is copied")
     {
@@ -293,16 +290,10 @@ SCENARIO("Detecting and fixing problems with vertices and cells",
                      [](Delaunay3::Point a, std::size_t b) {
                        return std::make_pair(a, b);
                      });
-      //      for (gsl::index j = 0; j < 4; ++j) {
-      //        causal_vertices.emplace_back(std::make_pair(Vertices[j],
-      //        timevalue[j]));
-      //      }
       Delaunay3 triangulation(causal_vertices.begin(), causal_vertices.end());
       FoliatedTriangulation3 foliatedTriangulation(triangulation);
       THEN("No errors in the simplex are detected.")
       {
-        //        CHECK_FALSE(
-        //            foliatedTriangulation.check_timeslices(foliatedTriangulation));
         CHECK(foliatedTriangulation.is_foliated());
         // Human verification
         foliatedTriangulation.print_cells();
@@ -327,10 +318,6 @@ SCENARIO("Detecting and fixing problems with vertices and cells",
                      [](Delaunay3::Point a, std::size_t b) {
                        return std::make_pair(a, b);
                      });
-      //      for (gsl::index j = 0; j < 4; ++j) {
-      //        causal_vertices.emplace_back(std::make_pair(Vertices[j],
-      //        timevalue[j]));
-      //      }
       Delaunay3 triangulation(causal_vertices.begin(), causal_vertices.end());
       FoliatedTriangulation3 foliatedTriangulation(triangulation);
       THEN("An error is detected.")
@@ -339,7 +326,7 @@ SCENARIO("Detecting and fixing problems with vertices and cells",
         CHECK_FALSE(foliatedTriangulation.is_foliated());
       }
 #ifndef _WIN64
-      // Visual Studio doesn't like this
+      // MSVC doesn't like this
       AND_THEN("The high value is discarded.")
       {
         auto discarded =
@@ -363,19 +350,14 @@ SCENARIO("Detecting and fixing problems with vertices and cells",
                      [](Delaunay3::Point a, std::size_t b) {
                        return std::make_pair(a, b);
                      });
-      //      for (gsl::index j = 0; j < 4; ++j) {
-      //        causal_vertices.emplace_back(std::make_pair(Vertices[j],
-      //        timevalue[j]));
-      //      }
       Delaunay3 triangulation(causal_vertices.begin(), causal_vertices.end());
       FoliatedTriangulation3 foliatedTriangulation(triangulation);
       THEN("An error is detected.")
       {
-        //        CHECK(foliatedTriangulation.check_timeslices(foliatedTriangulation));
         CHECK_FALSE(foliatedTriangulation.is_foliated());
       }
 #ifndef _WIN64
-      // Visual Studio doesn't like this
+      // MSVC doesn't like this
       AND_THEN("The low value is discarded.")
       {
         auto discarded =
@@ -399,15 +381,10 @@ SCENARIO("Detecting and fixing problems with vertices and cells",
                      [](Delaunay3::Point a, std::size_t b) {
                        return std::make_pair(a, b);
                      });
-      //      for (gsl::index j = 0; j < 4; ++j) {
-      //        causal_vertices.emplace_back(std::make_pair(Vertices[j],
-      //        timevalue[j]));
-      //      }
       Delaunay3 triangulation(causal_vertices.begin(), causal_vertices.end());
       FoliatedTriangulation3 foliatedTriangulation(triangulation);
       THEN("An error is detected.")
       {
-        //        CHECK(foliatedTriangulation.check_timeslices(foliatedTriangulation));
         CHECK_FALSE(foliatedTriangulation.is_foliated());
       }
 #ifndef _WIN64

@@ -1,16 +1,15 @@
 /// Causal Dynamical Triangulations in C++ using CGAL
 ///
-/// Copyright © 2018-2019 Adam Getchell
+/// Copyright © 2018-2020 Adam Getchell
 ///
 /// Tests of new manifold data structure compatible with old SimplicialManifold
 
-/// @file ManifoldTest.cpp
+/// @file Manifold_test.cpp
 /// @brief Tests of new manifold data structure
 /// @author Adam Getchell
 
 #include "Manifold.hpp"
 #include <CGAL/Triangulation_3.h>
-#include <algorithm>
 #include <catch2/catch.hpp>
 
 using namespace std;
@@ -26,11 +25,11 @@ SCENARIO("3-Manifold std::function compatibility and exception-safety",
       {
         REQUIRE(is_default_constructible<Manifold3>::value);
       }
-      /// TODO: Make Manifold no-throw default constructible
-      //      THEN("It is no-throw default constructible.")
-      //      {
-      //        CHECK(is_nothrow_default_constructible<Manifold3>::value);
-      //      }
+      //      /// TODO: Make Manifold no-throw default constructible
+      //            THEN("It is no-throw default constructible.")
+      //            {
+      //              CHECK(is_nothrow_default_constructible<Manifold3>::value);
+      //            }
       THEN("It is no-throw destructible.")
       {
         REQUIRE(is_nothrow_destructible<Manifold3>::value);
@@ -65,6 +64,12 @@ SCENARIO("3-Manifold std::function compatibility and exception-safety",
       //      {
       //        CHECK(is_nothrow_move_assignable<Manifold3>::value);
       //      }
+      THEN("friend void swap(Manifold1, Manifold2) is noexcept")
+      {
+        Manifold3 m1;
+        Manifold3 m2;
+        CHECK(noexcept(swap(m1, m2)));
+      }
     }
   }
 }
@@ -76,10 +81,23 @@ SCENARIO("3-Manifold initialization", "[manifold]")
     WHEN("It is default constructed.")
     {
       Manifold3 manifold;
-      THEN("The default Delaunay triangulation is valid.")
+      THEN("The triangulation is valid.")
       {
+        REQUIRE_THAT(typeid(manifold.get_triangulation()).name(),
+                     Catch::Contains("FoliatedTriangulation"));
+        fmt::print("The triangulation data structure is of type {}\n",
+                   typeid(manifold.get_triangulation()).name());
         REQUIRE(manifold.is_delaunay());
         REQUIRE(manifold.is_valid());
+      }
+      //      THEN("The triangulation is valid.") {
+      //      REQUIRE(manifold.is_correct()); }
+      THEN("The geometry is of type geometry class.")
+      {
+        REQUIRE_THAT(typeid(manifold.get_geometry()).name(),
+                     Catch::Contains("Geometry"));
+        fmt::print("The Geometry data structure is of type {}\n",
+                   typeid(manifold.get_geometry()).name());
       }
     }
     WHEN("It is constructed from a Delaunay triangulation.")
@@ -93,7 +111,17 @@ SCENARIO("3-Manifold initialization", "[manifold]")
       Delaunay3 dt(cv.begin(), cv.end());
       Manifold3 manifold(dt);
 
-      THEN("The triangulation is valid.") { REQUIRE(manifold.is_correct()); }
+      THEN("The triangulation is valid.")
+      {
+        REQUIRE_THAT(typeid(manifold.get_triangulation()).name(),
+                     Catch::Contains("FoliatedTriangulation"));
+        REQUIRE(manifold.is_correct());
+      }
+      THEN("The geometry is of type geometry class.")
+      {
+        REQUIRE_THAT(typeid(manifold.get_geometry()).name(),
+                     Catch::Contains("Geometry"));
+      }
       THEN("The geometry matches the triangulation.")
       {
         REQUIRE(manifold.is_foliated());
@@ -126,7 +154,17 @@ SCENARIO("3-Manifold initialization", "[manifold]")
       FoliatedTriangulation3 ft(dt);
       Manifold3              manifold(ft);
 
-      THEN("The triangulation is valid.") { REQUIRE(manifold.is_correct()); }
+      THEN("The triangulation is valid.")
+      {
+        REQUIRE_THAT(typeid(manifold.get_triangulation()).name(),
+                     Catch::Contains("FoliatedTriangulation"));
+        REQUIRE(manifold.is_correct());
+      }
+      THEN("The geometry is of type geometry class.")
+      {
+        REQUIRE_THAT(typeid(manifold.get_geometry()).name(),
+                     Catch::Contains("Geometry"));
+      }
       THEN("The geometry matches the triangulation.")
       {
         REQUIRE(manifold.is_foliated());
@@ -149,8 +187,8 @@ SCENARIO("3-Manifold initialization", "[manifold]")
     }
     WHEN("Constructing the minimum size triangulation.")
     {
-      auto constexpr desired_simplices  = static_cast<int_fast32_t>(2);
-      auto constexpr desired_timeslices = static_cast<int_fast32_t>(2);
+      auto constexpr desired_simplices  = static_cast<Int_precision>(2);
+      auto constexpr desired_timeslices = static_cast<Int_precision>(2);
       Manifold3 manifold(desired_simplices, desired_timeslices);
       THEN("Triangulation is valid.") { REQUIRE(manifold.is_correct()); }
       THEN("The geometry matches the triangulation.")
@@ -178,8 +216,8 @@ SCENARIO("3-Manifold initialization", "[manifold]")
     }
     WHEN("Constructing a small triangulation.")
     {
-      auto constexpr desired_simplices  = static_cast<int_fast32_t>(640);
-      auto constexpr desired_timeslices = static_cast<int_fast32_t>(4);
+      auto constexpr desired_simplices  = static_cast<Int_precision>(640);
+      auto constexpr desired_timeslices = static_cast<Int_precision>(4);
       Manifold3 manifold(desired_simplices, desired_timeslices);
       THEN("Triangulation is valid.") { REQUIRE(manifold.is_correct()); }
       THEN("The geometry matches the triangulation.")
@@ -196,8 +234,8 @@ SCENARIO("3-Manifold initialization", "[manifold]")
     }
     WHEN("Constructing a medium triangulation.")
     {
-      auto constexpr desired_simplices  = static_cast<int_fast32_t>(6400);
-      auto constexpr desired_timeslices = static_cast<int_fast32_t>(7);
+      auto constexpr desired_simplices  = static_cast<Int_precision>(6400);
+      auto constexpr desired_timeslices = static_cast<Int_precision>(7);
       Manifold3 manifold(desired_simplices, desired_timeslices);
       THEN("Triangulation is valid.") { REQUIRE(manifold.is_correct()); }
       THEN("The geometry matches the triangulation.")
@@ -217,27 +255,25 @@ SCENARIO("3-Manifold initialization", "[manifold]")
 
 SCENARIO("3-Manifold function checks", "[manifold]")
 {
-  /// TODO: Fix is_infinite and is_vertex from cells container
   GIVEN("The default manifold from the default triangulation")
   {
     Manifold3 manifold;
     THEN("There is only one vertex, the infinite vertex.")
     {
-      auto vertices =
+      auto&& vertices =
           manifold.get_triangulation().get_delaunay().tds().vertices();
-      auto vertex = vertices.begin();
-      cout << boolalpha
-           << "The single vertex is a vertex: " << manifold.is_vertex(vertex)
-           << "\n";
+      auto&& vertex = vertices.begin();
+
       CHECK(vertices.size() == 1);
-      //      CHECK(manifold.get_triangulation().is_infinite(vertex));
+      CHECK(manifold.is_vertex(vertex));
+      CHECK(manifold.get_triangulation().is_infinite(vertex));
     }
   }
 
   GIVEN("A 3-manifold")
   {
-    auto constexpr desired_simplices  = static_cast<int_fast32_t>(640);
-    auto constexpr desired_timeslices = static_cast<int_fast32_t>(4);
+    auto constexpr desired_simplices  = static_cast<Int_precision>(640);
+    auto constexpr desired_timeslices = static_cast<Int_precision>(4);
     WHEN("It is initialized.")
     {
       Manifold3 manifold(desired_simplices, desired_timeslices);
@@ -260,8 +296,8 @@ SCENARIO("3-Manifold copying", "[manifold]")
 {
   GIVEN("A 3-manifold.")
   {
-    auto constexpr desired_simplices  = static_cast<int_fast32_t>(640);
-    auto constexpr desired_timeslices = static_cast<int_fast32_t>(4);
+    auto constexpr desired_simplices  = static_cast<Int_precision>(640);
+    auto constexpr desired_timeslices = static_cast<Int_precision>(4);
     Manifold3 manifold(desired_simplices, desired_timeslices);
     WHEN("It is copied.")
     {
@@ -288,24 +324,19 @@ SCENARIO("3-Manifold copying", "[manifold]")
         CHECK(manifold2.max_time() == manifold.max_time());
         CHECK(manifold2.min_time() == manifold.min_time());
         // Human verification
-        cout << "Manifold properties:\n";
+        fmt::print("Manifold properties:\n");
         print_manifold(manifold);
         manifold.print_volume_per_timeslice();
         auto cells = manifold.get_triangulation().get_delaunay().tds().cells();
-        cout << "cells.size() == " << cells.size() << "\n";
-        cout << "Cell compact container size is " << cells.size() << "\n";
-        //          cells.erase(std::remove_if(cells.begin(),
-        //          cells.end(),[](auto c){return
-        //          is_infinite(c);}),cells.end());
-        cout << "Now compact container size is " << cells.size() << "\n";
-        cout << "Vertex compact container size is "
-             << manifold.get_triangulation()
-                    .get_delaunay()
-                    .tds()
-                    .vertices()
-                    .size()
-             << "\n";
-        cout << "Copied manifold properties:\n";
+        fmt::print("Cell compact container size == {}\n", cells.size());
+        fmt::print("Now compact container size == {}\n", cells.size());
+        fmt::print("Vertex compact container size == {}\n",
+                   manifold.get_triangulation()
+                       .get_delaunay()
+                       .tds()
+                       .vertices()
+                       .size());
+        fmt::print("Copied manifold properties:\n");
         print_manifold(manifold2);
         manifold2.print_volume_per_timeslice();
       }
@@ -317,31 +348,31 @@ SCENARIO("3-Manifold update geometry", "[manifold]")
 {
   GIVEN("A 3-manifold.")
   {
-    auto constexpr desired_simplices  = static_cast<int_fast32_t>(640);
-    auto constexpr desired_timeslices = static_cast<int_fast32_t>(4);
+    auto constexpr desired_simplices  = static_cast<Int_precision>(640);
+    auto constexpr desired_timeslices = static_cast<Int_precision>(4);
     Manifold3 manifold(desired_simplices, desired_timeslices);
-    WHEN("We call update_geometry().")
+    WHEN("We call update().")
     {
       // Get values for manifold1
       auto manifold_N3 = manifold.N3();
       auto manifold_N2 = manifold.N2();
       auto manifold_N1 = manifold.N1();
       auto manifold_N0 = manifold.N0();
-      cout << "Manifold N3 = " << manifold_N3 << "\n";
-      cout << "Manifold N2 = " << manifold_N2 << "\n";
-      cout << "Manifold N1 = " << manifold_N1 << "\n";
-      cout << "Manifold N0 = " << manifold_N0 << "\n";
-      manifold.update_geometry();
-      std::cout << "Update geometry called.\n";
+      fmt::print("Manifold N3 = {}\n", manifold_N3);
+      fmt::print("Manifold N2 = {}\n", manifold_N2);
+      fmt::print("Manifold N1 = {}\n", manifold_N1);
+      fmt::print("Manifold N0 = {}\n", manifold_N0);
+      manifold.update();
+      fmt::print("update() called.\n");
       THEN("We get back the same values.")
       {
-        cout << "Manifold N3 is still " << manifold.N3() << "\n";
+        fmt::print("Manifold N3 is still {}\n", manifold.N3());
         CHECK(manifold.N3() == manifold_N3);
-        cout << "Manifold N2 is still " << manifold.N2() << "\n";
+        fmt::print("Manifold N2 is still {}\n", manifold.N2());
         CHECK(manifold.N2() == manifold_N2);
-        cout << "Manifold N1 is still " << manifold.N1() << "\n";
+        fmt::print("Manifold N1 is still {}\n", manifold.N1());
         CHECK(manifold.N1() == manifold_N1);
-        cout << "Manifold N0 is still " << manifold.N0() << "\n";
+        fmt::print("Manifold N0 is still {}\n", manifold.N0());
         CHECK(manifold.N0() == manifold_N0);
       }
     }
@@ -352,8 +383,8 @@ SCENARIO("3-Manifold mutation", "[manifold]")
 {
   GIVEN("A pair of 3-manifolds.")
   {
-    auto constexpr desired_simplices  = static_cast<int_fast32_t>(640);
-    auto constexpr desired_timeslices = static_cast<int_fast32_t>(4);
+    auto constexpr desired_simplices  = static_cast<Int_precision>(640);
+    auto constexpr desired_timeslices = static_cast<Int_precision>(4);
     Manifold3 manifold1(desired_simplices, desired_timeslices);
     Manifold3 manifold2(desired_simplices, desired_timeslices);
     WHEN("We swap the triangulation of one manifold for another.")
@@ -363,42 +394,42 @@ SCENARIO("3-Manifold mutation", "[manifold]")
       auto manifold1_N2 = manifold1.N2();
       auto manifold1_N1 = manifold1.N1();
       auto manifold1_N0 = manifold1.N0();
-      cout << "Manifold 1 N3 = " << manifold1_N3 << "\n";
-      cout << "Manifold 1 N2 = " << manifold1_N2 << "\n";
-      cout << "Manifold 1 N1 = " << manifold1_N1 << "\n";
-      cout << "Manifold 1 N0 = " << manifold1_N0 << "\n";
+      fmt::print("Manifold 1 N3 = {}\n", manifold1_N3);
+      fmt::print("Manifold 1 N2 = {}\n", manifold1_N2);
+      fmt::print("Manifold 1 N1 = {}\n", manifold1_N1);
+      fmt::print("Manifold 1 N0 = {}\n", manifold1_N0);
       // Get values for manifold2
       auto manifold2_N3 = manifold2.N3();
       auto manifold2_N2 = manifold2.N2();
       auto manifold2_N1 = manifold2.N1();
       auto manifold2_N0 = manifold2.N0();
-      cout << "Manifold 2 N3 = " << manifold2_N3 << "\n";
-      cout << "Manifold 2 N2 = " << manifold2_N2 << "\n";
-      cout << "Manifold 2 N1 = " << manifold2_N1 << "\n";
-      cout << "Manifold 2 N0 = " << manifold2_N0 << "\n";
+      fmt::print("Manifold 2 N3 = {}\n", manifold2_N3);
+      fmt::print("Manifold 2 N2 = {}\n", manifold2_N2);
+      fmt::print("Manifold 2 N1 = {}\n", manifold2_N1);
+      fmt::print("Manifold 2 N0 = {}\n", manifold2_N0);
       // Change manifold1's triangulation to manifold2's
       manifold1.triangulation() = manifold2.get_triangulation();
-      std::cout << "Manifolds swapped.\n";
-      THEN("Not calling update_geometry() gives old values.")
+      fmt::print("Manifolds swapped.\n");
+      THEN("Not calling update() gives old values.")
       {
         CHECK(manifold1.N3() == manifold1_N3);
         CHECK(manifold1.N2() == manifold1_N2);
         CHECK(manifold1.N1() == manifold1_N1);
         CHECK(manifold1.N0() == manifold1_N0);
 
-        AND_WHEN("We call update_geometry.")
+        AND_WHEN("We call update().")
         {
-          manifold1.update_geometry();
-          std::cout << "Update geometry called.\n";
+          manifold1.update();
+          fmt::print("update() called.\n");
           THEN("The geometry matches the new triangulation.")
           {
-            cout << "Manifold 1 N3 is now " << manifold1.N3() << "\n";
+            fmt::print("Manifold 1 N3 is now {}\n", manifold1.N3());
             CHECK(manifold1.N3() == manifold2_N3);
-            cout << "Manifold 1 N2 is now " << manifold1.N2() << "\n";
+            fmt::print("Manifold 1 N2 is now {}\n", manifold1.N2());
             CHECK(manifold1.N2() == manifold2_N2);
-            cout << "Manifold 1 N1 is now " << manifold1.N1() << "\n";
+            fmt::print("Manifold 1 N1 is now {}\n", manifold1.N1());
             CHECK(manifold1.N1() == manifold2_N1);
-            cout << "Manifold 1 N0 is now " << manifold1.N0() << "\n";
+            fmt::print("Manifold 1 N0 is now {}\n", manifold1.N0());
             CHECK(manifold1.N0() == manifold2_N0);
           }
         }
@@ -428,15 +459,18 @@ SCENARIO("3-Manifold validation and fixing", "[manifold][!mayfail]")
       THEN("We get back the correct number of vertices.")
       {
         REQUIRE(vertices.size() == 5);
-        for (auto&& vertex : vertices)
-        {
-          cout << boolalpha
-               << "Vertex is a vertex: " << manifold.is_vertex(vertex) << "\n";
-          cout << boolalpha << "Vertex is infinite: "
-               << manifold.get_triangulation().is_infinite(vertex) << "\n";
-          //          if (!manifold.get_triangulation().is_infinite(vertex))
-          //          { REQUIRE(manifold.is_vertex(vertex)); }
-        }
+        //        for (auto&& vertex : vertices)
+        //        {
+        //          cout << boolalpha
+        //               << "Vertex is a vertex: " << manifold.is_vertex(vertex)
+        //               << "\n";
+        //          cout << boolalpha << "Vertex is infinite: "
+        //               << manifold.get_triangulation().is_infinite(vertex) <<
+        //               "\n";
+        //          //          if
+        //          (!manifold.get_triangulation().is_infinite(vertex))
+        //          //          { REQUIRE(manifold.is_vertex(vertex)); }
+        //        }
       }
     }
     /// TODO: Fix checks of vertex timevalues and simplex types
@@ -462,8 +496,8 @@ SCENARIO("3-Manifold validation and fixing", "[manifold][!mayfail]")
   }
   GIVEN("A medium sized manifold.")
   {
-    auto constexpr desired_simplices  = static_cast<int_fast32_t>(6400);
-    auto constexpr desired_timeslices = static_cast<int_fast32_t>(7);
+    auto constexpr desired_simplices  = static_cast<Int_precision>(6400);
+    auto constexpr desired_timeslices = static_cast<Int_precision>(7);
     WHEN("It is constructed.")
     {
       Manifold3 manifold(desired_simplices, desired_timeslices);
@@ -478,7 +512,7 @@ SCENARIO("3-Manifold validation and fixing", "[manifold][!mayfail]")
         REQUIRE(manifold.vertices() == manifold.N0());
         REQUIRE(manifold.edges() == manifold.N1());
         REQUIRE(manifold.faces() == manifold.N2());
-        REQUIRE(manifold.simplices() == manifold.N3());
+        REQUIRE(manifold.number_of_simplices() == manifold.N3());
       }
       THEN("The number of timeslices is correct.")
       {
@@ -493,7 +527,7 @@ SCENARIO("3-Manifold validation and fixing", "[manifold][!mayfail]")
           CHECK(vertex->info() >= manifold.min_time());
           CHECK(vertex->info() <= manifold.max_time());
 #ifndef NDEBUG
-          std::cout << "Vertex->info() = " << vertex->info() << "\n";
+          fmt::print("Vertex->info() = {}\n", vertex->info());
 #endif
         }
       }
@@ -509,7 +543,7 @@ SCENARIO("3-Manifold validation and fixing", "[manifold][!mayfail]")
                                        },
                                        "Cell->info() should be 13, 22, or 31"));
 #ifndef NDEBUG
-          std::cout << "Cell->info() = " << cell->info() << "\n";
+          fmt::print("Cell->info() = {}\n", cell->info());
 #endif
         }
       }

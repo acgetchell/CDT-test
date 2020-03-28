@@ -1,60 +1,99 @@
 /// Causal Dynamical Triangulations in C++ using CGAL
 ///
-/// Copyright © 2018-2019 Adam Getchell
+/// Copyright © 2018-2020 Adam Getchell
 
 /// @file Move_command.hpp
 /// @brief Do ergodic moves using the Command pattern
+/// @author Adam Getchell
+/// @bug Moves are performed by execute(), but the results are incorrect
+/// @bug CppCheck reports:
+
+// /Users/adam/CDT-plusplus/include/Move_command.hpp:49:21: error: Returning
+// object that points to local variable 'm_manifold' that will be invalid when
+// returning. [returnDanglingLifetime] return std::cref(m_manifold);
+//                 ^
+// /Users/adam/CDT-plusplus/include/Move_command.hpp:49:22: note: Passed to
+// 'cref'. return std::cref(m_manifold);
+//                  ^
+// /Users/adam/CDT-plusplus/include/Move_command.hpp:75:28: note: Variable
+// created here. print_manifold_details(m_manifold);
+//                        ^
+// /Users/adam/CDT-plusplus/include/Move_command.hpp:49:21: note: Returning
+// object that points to local variable 'm_manifold' that will be invalid when
+// returning. return std::cref(m_manifold);
+//                 ^
+// /Users/adam/CDT-plusplus/include/Move_command.hpp:53:46: error: Reference to
+// local variable returned. [returnReference]
+// [[nodiscard]] auto& get_results() { return m_manifold; }
 
 #ifndef CDT_PLUSPLUS_MOVECOMMAND_HPP
 #define CDT_PLUSPLUS_MOVECOMMAND_HPP
 
-#include <Ergodic_moves_3.hpp>
-#include <Manifold.hpp>
+#include "Apply_move.hpp"
+#include "Ergodic_moves_3.hpp"
 #include <functional>
 
 template <typename ManifoldType,
           typename FunctionType = std::function<ManifoldType(ManifoldType&)>>
-// typename FunctionType = ManifoldType (*)(ManifoldType&)>
 class MoveCommand
 {
  public:
-  explicit MoveCommand(ManifoldType manifold)
-      : manifold_{std::make_unique<ManifoldType>(manifold)}
+  /// @brief MoveCommand ctor
+  /// Pass-by-value then std::move.
+  /// https://abseil.io/tips/117
+  /// @param t_manifold The manifold to perform moves upon
+  explicit MoveCommand(ManifoldType t_manifold)
+      : m_manifold{std::move(t_manifold)}
   {}
 
   /// @return A read-only reference to the manifold
   auto get_manifold() const -> ManifoldType const&
   {
-    return std::cref(*manifold_);
+    return std::cref(m_manifold);
   }
 
-  /// @return The results of the commands
-  [[nodiscard]] auto& get_results() { return *manifold_; }
+  /// @return The results of the moves invoked by MoveCommand
+  [[nodiscard]] auto& get_results() { return m_manifold; }
 
-  /// Push a move onto the move queue
-  /// @param move The move to do on the manifold
-  void enqueue(FunctionType move) { moves_.emplace_back(move); }
+  /// @brief Push a Pachner move onto the move queue
+  /// @param t_move The move to do on the manifold
+  void enqueue(FunctionType t_move) { m_moves.push_front(std::move(t_move)); }
 
   /// Execute the move on the manifold
   void execute()
   try
   {
     // debugging
-    std::cout << "Before manifold move:\n";
-    print_manifold_details(*manifold_);
-    auto move = moves_.back();
-    move(*manifold_);
+    fmt::print("Before manifold move:\n");
+    print_manifold_details(m_manifold);
+    auto move = m_moves.back();
+    //    auto move = m_moves.pop_back();
+
+    fmt::print("During move:\n");
+    auto result = apply_move(m_manifold, move);
+    result.update();
+    print_manifold_details(result);
+
+    fmt::print("After manifold move:\n");
+    swap(result, m_manifold);
+    print_manifold_details(m_manifold);
+    //    m_manifold->update();
   }
-  catch (const std::exception& e)
+  catch (std::exception const& e)
   {
-    std::cerr << "execute() failed: " << e.what() << "\n";
+    fmt::print(stderr, "execute () failed: {}\n", e.what());
     throw;
-  }
+  }  // execute
+
+  // Functionality for later, perhaps using a Memento
   //    virtual void undo();
   //    virtual void redo();
  private:
-  std::unique_ptr<ManifoldType> manifold_;
-  std::vector<FunctionType>     moves_;
+  /// @brief The Manifold on which to make the move
+  ManifoldType m_manifold;
+
+  /// @brief The queue of moves to make
+  std::deque<FunctionType> m_moves;
 };
 
 // template <std::size_t dimension>
@@ -76,7 +115,7 @@ class MoveCommand
 //  };
 //
 //  using Move_queue   = std::vector<Move_type>;
-//  using Move_tracker = std::array<std::int_fast32_t, 5>;
+//  using Move_tracker = std::array<std::int_fast64_t, 5>;
 //
 //  /// @brief Default constructor
 //  Move_command()

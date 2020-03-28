@@ -5,12 +5,12 @@
 /// Ensures that the S3 bulk action calculations are correct, and give
 /// similar results for similar values.
 
-/// @file S3Action.cpp
+/// @file S3Action_test.cpp
 /// @brief Tests for the S3 action functions
 /// @author Adam Getchell
 
-#include <Manifold.hpp>
-#include <S3Action.hpp>
+#include "Manifold.hpp"
+#include "S3Action.hpp"
 #include <catch2/catch.hpp>
 
 using namespace std;
@@ -19,13 +19,13 @@ SCENARIO("Calculate the bulk action on S3 triangulations", "[action]")
 {
   GIVEN("A 3D 2-sphere foliated triangulation.")
   {
-    constexpr auto simplices  = static_cast<int_fast32_t>(6400);
-    constexpr auto timeslices = static_cast<int_fast32_t>(7);
-    constexpr auto K          = static_cast<long double>(1.1);
-    constexpr auto Lambda     = static_cast<long double>(0.1);
+    constexpr auto simplices  = static_cast<Int_precision>(6400);
+    constexpr auto timeslices = static_cast<Int_precision>(7);
+    constexpr auto K          = 1.1L;
+    constexpr auto Lambda     = 0.1L;
     Manifold3      universe(simplices, timeslices);
     // Verify triangulation
-    CHECK(universe.N3() == universe.simplices());
+    CHECK(universe.N3() == universe.number_of_simplices());
     CHECK(universe.N1() == universe.edges());
     CHECK(universe.N0() == universe.vertices());
     CHECK(universe.dim() == 3);
@@ -61,7 +61,7 @@ SCENARIO("Calculate the bulk action on S3 triangulations", "[action]")
     }
     WHEN("The generalized Bulk Action is calculated.")
     {
-      constexpr auto Alpha = static_cast<long double>(0.6);
+      constexpr auto Alpha = 0.6L;
       cout << "(Long double) Alpha = " << Alpha << '\n';
       auto Bulk_action = S3_bulk_action(universe.N1_TL(), universe.N3_31_13(),
                                         universe.N3_22(), Alpha, K, Lambda);
@@ -76,8 +76,8 @@ SCENARIO("Calculate the bulk action on S3 triangulations", "[action]")
         "S3_bulk_action(alpha=1) and S3_bulk_action_alpha_one() are "
         "calculated.")
     {
-      constexpr auto tolerance = static_cast<long double>(0.01);
-      constexpr auto Alpha     = static_cast<long double>(1.0);
+      constexpr auto tolerance = 0.01L;
+      constexpr auto Alpha     = 1.0L;
       auto Bulk_action = S3_bulk_action(universe.N1_TL(), universe.N3_31_13(),
                                         universe.N3_22(), Alpha, K, Lambda);
       auto Bulk_action_one = S3_bulk_action_alpha_one(

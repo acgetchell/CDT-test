@@ -5,7 +5,7 @@
 /// Tests that 3D triangulated and foliated tetrahedrons are constructed
 /// correctly.
 ///
-/// @file Tetrahedron.cpp
+/// @file Tetrahedron_test.cpp
 /// @brief Tests for 3D triangulated and foliated tetrahedrons
 /// @author Adam Getchell
 
@@ -154,7 +154,7 @@ SCENARIO("Construct a foliated tetrahedron in the triangulation",
              new_universe.get_triangulation().get_delaunay().finite_cells_end();
              ++cit)
         {
-          std::cout << "Simplex type is " << cit->info() << '\n';
+          fmt::print("Simplex type is {}\n", cit->info());
           REQUIRE(cit->info() == static_cast<int>(Cell_type::THREE_ONE));
         }
       }

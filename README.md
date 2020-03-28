@@ -2,7 +2,6 @@
 [![Build Status](https://img.shields.io/travis/com/acgetchell/CDT-test.svg?label=Linux/MacOS)](https://travis-ci.com/acgetchell/CDT-test)
 [![Windows Build status](https://img.shields.io/appveyor/ci/acgetchell/cdt-test.svg?label=Windows)](https://ci.appveyor.com/project/acgetchell/cdt-test)
 [![Open Issues](https://img.shields.io/github/issues-raw/acgetchell/CDT-test.svg)](https://github.com/acgetchell/CDT-test/issues)
- [![Join the chat at https://gitter.im/acgetchell/CDT-plusplus](https://img.shields.io/badge/gitter-join%20chat%20→-brightgreen.svg)](https://gitter.im/acgetchell/CDT-plusplus)
 
 ## Setup
 
@@ -62,9 +61,6 @@ N.B.
 
 - As of 2018-11-29, the [vcpkg] formula for [date] is [broken][1], so I removed reliance on that library.
 Hopefully it will be back in C++20!
-
-- As of 2019-10-16 the [vcpkg] package for [tbb] doesn't [build][2], so I removed reliance on that library.
-But it speeds up triangulations by a factor of 3, so it would be great to be able to use someday.
 
 - As of 2019-10-16 [vcpkg] doesn't [build][3] on macOS 10.14 (but does on 10.15).
 

@@ -17,51 +17,22 @@ endif()
 # OPTIONS  ##
 #
 
-# Set mimumum Boost
-set(BOOST_MIN_VERSION "1.70.0")
+# Compiler options and static analyzers
+include(cmake/StandardProjectSettings.cmake)
+include(cmake/StaticAnalyzers.cmake)
 
-# Compile commands for ClangTidy et. al
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+# Link to project_options library to set sanitizer options
+add_library(project_options INTERFACE)
+target_compile_features(project_options INTERFACE cxx_std_17)
+include(cmake/Sanitizers.cmake)
+enable_sanitizers(project_options)
 
-# Use C++17 for std::optional
-set(CMAKE_CXX_STANDARD 17)
+# Link to project_warnings library to set compiler warnings
+add_library(project_warnings INTERFACE)
+include(cmake/CompilerWarnings.cmake)
+set_project_warnings(project_warnings)
 
-# Turn on / off TBB
-set(TBB_ON FALSE)
-
-# Threads
-set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
-
-# gcc flags
-if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-  add_compile_options(
-    -frounding-math -Wmisleading-indentation -Wduplicated-cond
-    -Wduplicated-branches -Wlogical-op -Wuseless-cast)
-endif()
-
-# Turn on Visual Studio warnings
-if(WIN32)
-  if(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
-    string(REGEX REPLACE "/W[0-4]" "/W4" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-  else()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
-  endif()
-else()
-  # Extra warnings for non-Visual Studio
-  add_compile_options(-Wall -Wno-comment)
-endif()
-# Turn off CGAL Triangulation Assertions and Postconditions
-add_definitions(-DCGAL_TRIANGULATION_NO_ASSERTIONS
-                -DCGAL_TRIANGULATION_NO_POSTCONDITIONS)
-
-# Disable CLion generation of MinSizeRel to avoid conflicts with
-# CGAL_SetupFlags.cmake
-set(CMAKE_CONFIGURATION_TYPES
-    "Release" "Debug" "RelWithDebInfo"
-    CACHE STRING "" FORCE)
-
-# Easier navigation in an IDE when projects are organized in folders.
-set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+option(ENABLE_TESTING "Enable building of tests" TRUE)
 
 #
 # Project  ##
@@ -81,7 +52,8 @@ find_package(Boost REQUIRED)
 # https://eigen.tuxfamily.org/index.php?title=Main_Page
 find_package(Eigen3 CONFIG REQUIRED)
 
-# https://github.com/intel/tbb find_package(TBB CONFIG REQUIRED)
+# https://github.com/intel/tbb
+find_package(TBB CONFIG REQUIRED)
 
 # https://github.com/CGAL/cgal
 find_package(CGAL CONFIG REQUIRED)
@@ -114,8 +86,11 @@ target_compile_features(initialize PRIVATE cxx_std_17)
 #
 
 # Catch
+if(ENABLE_TESTING)
 enable_testing()
 add_subdirectory(tests)
+message(STATUS "Building tests. Check out /tests for unit tests.")
+endif()
 
 # CTest basic testing Parameter initializer program
 add_test(NAME CDT-Initialize COMMAND $<TARGET_FILE:initialize>)

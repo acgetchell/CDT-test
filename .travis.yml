@@ -1,7 +1,12 @@
+version: ~> 1.0
 language: cpp
-sudo: false
 dist: bionic
-osx_image: xcode11.2
+osx_image: xcode11.3
+
+cache:
+  - ccache
+  - directories:
+      - $TRAVIS_BUILD_DIR/vcpkg
 
 addons:
   apt:
@@ -9,9 +14,12 @@ addons:
       - sourceline: 'ppa:ubuntu-toolchain-r/test'
     packages:
       - g++-9
+      - ninja-build
       - yasm
   homebrew:
     packages:
+      - ccache
+      - ninja
       - yasm
     update: true
 
@@ -37,18 +45,18 @@ before_install:
 
 install:
   - if [[ "$CXX" == "g++" ]]; then export CXX="g++-9" CC="gcc-9"; fi
-#  - ./vcpkg install date
   - ./vcpkg install catch2
   - ./vcpkg install docopt
+  - ./vcpkg install fmt
   - ./vcpkg install ms-gsl
   - ./vcpkg install eigen3
-  - ./vcpkg install boost
-  - ./vcpkg install mpir
-  - ./vcpkg install mpfr
-#  - ./vcpkg install tbb
+  - ./vcpkg install tbb
   - ./vcpkg install cgal
-  - pwd
+  - ./vcpkg upgrade --no-dry-run
+  - ./vcpkg list
+  - rm -rf downloads buildtrees packages
   - cd ..
+  - pwd
 
 script:
   - mkdir build

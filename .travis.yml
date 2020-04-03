@@ -28,7 +28,7 @@ os:
   - osx
 
 compiler:
-  - gcc
+  - g++-9
   - clang
 
 jobs:
@@ -44,7 +44,7 @@ before_install:
   - git pull
 
 install:
-  - if [[ "$CXX" == "g++" ]]; then export CXX="g++-9" CC="gcc-9"; fi
+  #- if [[ "$CXX" == "g++" ]]; then export CXX="g++-9" CC="gcc-9"; fi
   - ./vcpkg install catch2
   - ./vcpkg install docopt
   - ./vcpkg install fmt

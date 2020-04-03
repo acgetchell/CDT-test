@@ -14,6 +14,7 @@ addons:
       - sourceline: 'ppa:ubuntu-toolchain-r/test'
     packages:
       - g++-9
+      - clang-10
       - ninja-build
       - yasm
   homebrew:
@@ -29,7 +30,7 @@ os:
 
 compiler:
   - g++-9
-  - clang
+  - clang-10
 
 jobs:
   allow_failures:

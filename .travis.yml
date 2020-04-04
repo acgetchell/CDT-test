@@ -47,7 +47,6 @@ before_install:
   - git pull
 
 install:
-  #- if [[ "$CXX" == "g++" ]]; then export CXX="g++-9" CC="gcc-9"; fi
   - ./vcpkg install catch2
   - ./vcpkg install docopt
   - ./vcpkg install fmt
@@ -62,6 +61,8 @@ install:
   - pwd
 
 script:
+  - if [[ "$CXX" == "g++" ]]; then export CXX="g++-9" CC="gcc-9"; fi
+  - if [[ "$CXX" == "clang" ]]; then export CXX="clang-10" CC="clang-10"; fi
   - mkdir build
   - cd build || exit
   - pwd

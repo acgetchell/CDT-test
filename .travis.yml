@@ -40,6 +40,8 @@ jobs:
 
 
 before_install:
+  - if [[ "$CXX" == "g++" ]]; then export CXX="g++-9" CC="gcc-9"; fi
+  - if [[ "$CXX" == "clang++" ]]; then export CXX="clang-10" CC="clang-10"; fi
   - git clone https://github.com/Microsoft/vcpkg.git
   - cd vcpkg
   - ./bootstrap-vcpkg.sh
@@ -61,8 +63,6 @@ install:
   - pwd
 
 script:
-  - if [[ "$CXX" == "g++" ]]; then export CXX="g++-9" CC="gcc-9"; fi
-  - if [[ "$CXX" == "clang" ]]; then export CXX="clang-10" CC="clang-10"; fi
   - mkdir build
   - cd build || exit
   - pwd

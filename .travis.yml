@@ -41,7 +41,7 @@ jobs:
 
 before_install:
   - if [[ "$CXX" == "g++" ]]; then export CXX="g++-9" CC="gcc-9"; fi
-  - if [[ "$CXX" == "clang++" ]]; then export CXX="clang-10" CC="clang-10"; fi
+  - if [[ "$CXX" == "clang++" ]]; then export CXX="clang++-10" CC="clang-10"; fi
   - cmake --version
 
 install:

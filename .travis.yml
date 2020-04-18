@@ -32,7 +32,7 @@ os:
 
 compiler:
   - g++-9
-  - clang-10
+  - clang++-10
 
 jobs:
   allow_failures:

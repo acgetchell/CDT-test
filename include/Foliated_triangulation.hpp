@@ -1,6 +1,6 @@
 /// Causal Dynamical Triangulations in C++ using CGAL
 ///
-/// Copyright © 2018-2019 Adam Getchell
+/// Copyright © 2018-2020 Adam Getchell
 ///
 /// Extends CGAL's Delaunay_triangulation_3 and Triangulation_3 classes
 /// to create foliated spherical triangulations of a given dimension.
@@ -27,7 +27,6 @@
 #include <CGAL/Triangulation_cell_base_with_info_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
 #include <CGAL/point_generators_3.h>
-#include <cstdint>
 #include <optional>
 
 using Kernel         = CGAL::Exact_predicates_inexact_constructions_kernel;
@@ -39,8 +38,14 @@ using Vertex_base =
 using Cell_base =
     CGAL::Triangulation_cell_base_with_info_3<Int_precision, Kernel>;
 // Parallel operations
+#ifdef CGAL_LINKED_WITH_TBB
 using Tds = CGAL::Triangulation_data_structure_3<Vertex_base, Cell_base,
                                                  CGAL::Parallel_tag>;
+#else
+using Tds = CGAL::Triangulation_data_structure_3<Vertex_base, Cell_base,
+                                                 CGAL::Sequential_tag>;
+#endif
+
 // Delaunay triangulation dimensionality
 using Delaunay3 = CGAL::Delaunay_triangulation_3<Kernel, Tds>;
 // using Delaunay4 = CGAL::Triangulation<CGAL::Epick_d<CGAL::Dimension_tag<4>>>;
@@ -61,6 +66,8 @@ enum class Cell_type
   ONE_THREE = 13   // (1,3)
 };
 
+/// @brief Compare time values of vertices
+/// @return True if timevalue of lhs is less than rhs
 auto compare_v_info = [](Vertex_handle const& lhs,
                          Vertex_handle const& rhs) -> bool {
   return lhs->info() < rhs->info();
@@ -87,12 +94,19 @@ class FoliatedTriangulation<3> final : private Delaunay3
   std::vector<Edge_handle>            m_timelike_edges;
   std::vector<Edge_handle>            m_spacelike_edges;
   std::vector<Vertex_handle>          m_points;
-  Int_precision                       m_max_timevalue;
-  Int_precision                       m_min_timevalue;
+  Int_precision                       m_max_timevalue{0};
+  Int_precision                       m_min_timevalue{0};
 
  public:
-  /// @brief Default constructor
-  FoliatedTriangulation() : Delaunay3{}, m_max_timevalue{0}, m_min_timevalue{0}
+  /// @brief Default dtor
+  ~FoliatedTriangulation() = default;
+
+  /// @brief Default ctor
+  FoliatedTriangulation() = default;
+
+  /// @brief Copy Constructor
+  FoliatedTriangulation(FoliatedTriangulation const& other)
+      : FoliatedTriangulation(static_cast<Delaunay3 const&>(other))
   {}
 
   /// @brief Constructor using delaunay triangulation
@@ -315,7 +329,7 @@ class FoliatedTriangulation<3> final : private Delaunay3
     auto infinite_vertex_timevalue = this->infinite_vertex()->info();
     for (auto v : vertices)
     {
-#ifndef NDEBUG
+#ifdef DETAILED_DEBUGGING
       std::cout << "Vertex (" << v.point() << ") has timevalue " << v.info()
                 << "\n";
 //        fmt::print("Vertex {} has timevalue {}\n", v.point(), v.info());
@@ -537,12 +551,12 @@ class FoliatedTriangulation<3> final : private Delaunay3
 #ifdef CGAL_LINKED_WITH_TBB
     // Construct the locking data-structure
     // using the bounding-box of the points
-    auto bounding_box_size = static_cast<double>(timeslices + 1);
-    Delaunay::Lock_data_structure locking_ds{
+    auto bounding_box_size = static_cast<double>(t_timeslices + 1);
+    Delaunay3::Lock_data_structure locking_ds{
         CGAL::Bbox_3{-bounding_box_size, -bounding_box_size, -bounding_box_size,
                      bounding_box_size, bounding_box_size, bounding_box_size},
         50};
-    Delaunay3 triangulation = Delaunay3{K{}, &locking_ds};
+    Delaunay3 triangulation = Delaunay3{Kernel{}, &locking_ds};
 #else
     Delaunay3 triangulation = Delaunay3{};
 #endif

@@ -14,22 +14,26 @@
 
 using namespace std;
 
-SCENARIO("3-Manifold std::function compatibility and exception-safety",
-         "[manifold]")
+SCENARIO("3-Manifold special member and swap properties", "[manifold]")
 {
   GIVEN("A 3-dimensional manifold.")
   {
-    WHEN("It's properties are examined.")
+    WHEN("Special members are examined.")
     {
+      THEN("It is no-throw destructible.")
+      {
+        REQUIRE(is_nothrow_destructible_v<Manifold3>);
+      }
+
       THEN("It is default constructible.")
       {
-        REQUIRE(is_default_constructible<Manifold3>::value);
+        REQUIRE(is_default_constructible_v<Manifold3>);
       }
-      //      /// TODO: Make Manifold no-throw default constructible
-      //            THEN("It is no-throw default constructible.")
-      //            {
-      //              CHECK(is_nothrow_default_constructible<Manifold3>::value);
-      //            }
+      /// TODO: Make Manifold no-throw default constructible
+      THEN("It is NOT no-throw default constructible.")
+      {
+        CHECK_FALSE(is_nothrow_default_constructible_v<Manifold3>);
+      }
       THEN("It is no-throw destructible.")
       {
         REQUIRE(is_nothrow_destructible<Manifold3>::value);
@@ -41,34 +45,32 @@ SCENARIO("3-Manifold std::function compatibility and exception-safety",
              << is_copy_constructible<Manifold3>::value << "\n";
       }
       /// TODO: Make Manifold no-throw copy constructible
-      //      THEN("It is no-throw copy constructible.")
-      //      {
-      //        CHECK(is_nothrow_copy_constructible<Manifold3>::value);
-      //      }
+      THEN("It is NOT no-throw copy constructible.")
+      {
+        CHECK_FALSE(is_nothrow_copy_constructible_v<Manifold3>);
+      }
       /// TODO: Make Manifold no-throw copy assignable
-      //      THEN("It is no-throw copy assignable.")
-      //      {
-      //        CHECK(is_nothrow_copy_assignable<Manifold3>::value);
-      //      }
+      THEN("It is NOT no-throw copy assignable.")
+      {
+        CHECK_FALSE(is_nothrow_copy_assignable_v<Manifold3>);
+      }
       THEN("It is move constructible.")
       {
         REQUIRE(is_move_constructible<Manifold3>::value);
       }
       /// TODO: Make Manifold no-throw move constructible
-      //      THEN("It is no-throw move constructible.")
-      //      {
-      //        CHECK(is_nothrow_move_constructible<Manifold3>::value);
-      //      }
-      /// TODO: Make Manifold no-throw move assignable
-      //      THEN("It is no-throw move assignable.")
-      //      {
-      //        CHECK(is_nothrow_move_assignable<Manifold3>::value);
-      //      }
-      THEN("friend void swap(Manifold1, Manifold2) is noexcept")
+      THEN("It is NOT no-throw move constructible.")
       {
-        Manifold3 m1;
-        Manifold3 m2;
-        CHECK(noexcept(swap(m1, m2)));
+        CHECK_FALSE(is_nothrow_move_constructible_v<Manifold3>);
+      }
+      /// TODO: Make Manifold no-throw move assignable
+      THEN("It is no-throw move assignable.")
+      {
+        CHECK_FALSE(is_nothrow_move_assignable_v<Manifold3>);
+      }
+      THEN("It is no-throw swappable.")
+      {
+        REQUIRE(is_nothrow_swappable<Manifold3>::value);
       }
     }
   }
@@ -90,8 +92,6 @@ SCENARIO("3-Manifold initialization", "[manifold]")
         REQUIRE(manifold.is_delaunay());
         REQUIRE(manifold.is_valid());
       }
-      //      THEN("The triangulation is valid.") {
-      //      REQUIRE(manifold.is_correct()); }
       THEN("The geometry is of type geometry class.")
       {
         REQUIRE_THAT(typeid(manifold.get_geometry()).name(),
@@ -473,6 +473,42 @@ SCENARIO("3-Manifold validation and fixing", "[manifold][!mayfail]")
         //        }
       }
     }
+    WHEN("It is constructed.")
+    {
+      THEN("The number of timeslices is correct.")
+      {
+        REQUIRE(manifold.min_time() == 1);
+        REQUIRE(manifold.max_time() == 3);
+      }
+      THEN("Every vertex in the manifold has a correct timevalue.")
+      {
+        auto vertices = manifold.get_vertices();
+        for (auto& vertex : vertices)
+        {
+          CHECK(vertex->info() >= manifold.min_time());
+          CHECK(vertex->info() <= manifold.max_time());
+#ifndef NDEBUG
+          fmt::print("Vertex->info() = {}\n", vertex->info());
+#endif
+        }
+      }
+      THEN("Every cell in the manifold is correctly classified.")
+      {
+        auto cells = manifold.get_triangulation().get_cells();
+        for (auto& cell : cells)
+        {
+          using Catch::Matchers::Predicate;
+          CHECK_THAT(cell->info(), Predicate<int>(
+                                       [](int const a) -> bool {
+                                         return (a == 13 || a == 22 || a == 31);
+                                       },
+                                       "Cell->info() should be 13, 22, or 31"));
+#ifndef NDEBUG
+          fmt::print("Cell->info() = {}\n", cell->info());
+#endif
+        }
+      }
+    }
     /// TODO: Fix checks of vertex timevalues and simplex types
     //    WHEN("We insert an invalid timevalue into a vertex.")
     //    {
@@ -526,7 +562,7 @@ SCENARIO("3-Manifold validation and fixing", "[manifold][!mayfail]")
         {
           CHECK(vertex->info() >= manifold.min_time());
           CHECK(vertex->info() <= manifold.max_time());
-#ifndef NDEBUG
+#ifdef DETAILED_DEBUGGING
           fmt::print("Vertex->info() = {}\n", vertex->info());
 #endif
         }
@@ -542,7 +578,7 @@ SCENARIO("3-Manifold validation and fixing", "[manifold][!mayfail]")
                                          return (a == 13 || a == 22 || a == 31);
                                        },
                                        "Cell->info() should be 13, 22, or 31"));
-#ifndef NDEBUG
+#ifdef DETAILED_DEBUGGING
           fmt::print("Cell->info() = {}\n", cell->info());
 #endif
         }

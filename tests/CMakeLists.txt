@@ -4,6 +4,7 @@ add_executable(
   CDT_test
   ${PROJECT_SOURCE_DIR}/tests/main.cpp
   Ergodic_moves_3_test.cpp
+  Foliated_triangulation_test.cpp
   Geometry_test.cpp
   Manifold_test.cpp
   Move_command_test.cpp
@@ -12,13 +13,10 @@ add_executable(
   Tetrahedron_test.cpp
   Torus_test.cpp
   Utilities_test.cpp
-  Vertex_test.cpp
-  Foliated_triangulation_test.cpp)
+  Vertex_test.cpp)
 
-target_link_libraries(
-  CDT_test
-  project_options project_warnings
-  Catch2::Catch2 fmt::fmt-header-only CGAL::CGAL)
+target_link_libraries(CDT_test project_options project_warnings Catch2::Catch2
+                      fmt::fmt-header-only CGAL::CGAL)
 
 # Activate C++17
 target_compile_features(CDT_test PRIVATE cxx_std_17)

@@ -75,7 +75,7 @@ set(ENV{CGAL_DATA_DIR} CMAKE_BINARY_DIR/Data)
 # Project vcpkg dependencies
 
 # https://github.com/CGAL/cgal
-find_package(CGAL CONFIG REQUIRED OPTIONAL_COMPONENTS Qt5)
+find_package(CGAL CONFIG REQUIRED)
 # Don't let CGAL override flags
 set(CGAL_DONT_OVERRIDE_CMAKE_FLAGS
     TRUE

@@ -20,6 +20,7 @@
 
 /// C++ headers
 #include <fmt/format.h>
+
 #include <iostream>
 #include <vector>
 
@@ -45,7 +46,9 @@ void make_d_sphere(std::size_t t_number_of_points, int t_dimension,
   CGAL::Random_points_on_sphere_d<Kd::Point_d> gen(t_dimension, t_radius);
 
   for (decltype(t_number_of_points) i = 0; i < t_number_of_points; ++i)
-  { t_points.push_back(*gen++); }
+  {
+    t_points.push_back(*gen++);
+  }
   // If output = true, print out values of points in sphere
   if (t_output_flag)
   {
@@ -54,7 +57,7 @@ void make_d_sphere(std::size_t t_number_of_points, int t_dimension,
         "center 0 and radius {}.\n",
         t_dimension, t_radius);
 
-    for (const auto& point : t_points) { std::cout << " " << point << "\n"; }
+    for (auto const& point : t_points) { std::cout << " " << point << "\n"; }
   }
 }  // make_d_sphere()
 

@@ -1,126 +1,229 @@
-/// Causal Dynamical Triangulations in C++ using CGAL
-///
-/// Copyright © 2018-2020 Adam Getchell
-///
-/// Tests of new manifold data structure compatible with old SimplicialManifold
+/*******************************************************************************
+ Causal Dynamical Triangulations in C++ using CGAL
+
+ Copyright © 2018 Adam Getchell
+ ******************************************************************************/
 
 /// @file Manifold_test.cpp
 /// @brief Tests of new manifold data structure
 /// @author Adam Getchell
 
 #include "Manifold.hpp"
-#include <CGAL/Triangulation_3.h>
-#include <catch2/catch.hpp>
+
+#include <doctest/doctest.h>
+
+#include <numbers>
 
 using namespace std;
+using namespace manifolds;
 
-SCENARIO("3-Manifold special member and swap properties", "[manifold]")
+static inline auto constinit const RADIUS_2 =
+    2.0 * std::numbers::inv_sqrt3_v<double>;
+
+SCENARIO("Manifold special member and swap properties" *
+         doctest::test_suite("manifold"))
 {
+  spdlog::debug("Manifold special member and swap properties.\n");
   GIVEN("A 3-dimensional manifold.")
   {
     WHEN("Special members are examined.")
     {
       THEN("It is no-throw destructible.")
       {
-        REQUIRE(is_nothrow_destructible_v<Manifold3>);
+        REQUIRE(is_nothrow_destructible_v<Manifold_3>);
+        spdlog::debug("It is no-throw destructible.\n");
       }
-
       THEN("It is default constructible.")
       {
-        REQUIRE(is_default_constructible_v<Manifold3>);
+        REQUIRE(is_default_constructible_v<Manifold_3>);
+        spdlog::debug("It is default constructible.\n");
       }
-      /// TODO: Make Manifold no-throw default constructible
-      THEN("It is NOT no-throw default constructible.")
+      THEN("It is NOT trivially constructible.")
       {
-        CHECK_FALSE(is_nothrow_default_constructible_v<Manifold3>);
+        CHECK_FALSE(is_trivially_constructible_v<Manifold_3>);
       }
-      THEN("It is no-throw destructible.")
+      THEN("It is NOT trivially default constructible.")
       {
-        REQUIRE(is_nothrow_destructible<Manifold3>::value);
+        CHECK_FALSE(is_trivially_default_constructible_v<Manifold_3>);
       }
-      THEN("It is copy constructible.")
+      THEN("It is no-throw copy constructible.")
       {
-        REQUIRE(is_copy_constructible<Manifold3>::value);
-        cout << "std::function<Manifold3> supported:" << boolalpha
-             << is_copy_constructible<Manifold3>::value << "\n";
+        REQUIRE(is_nothrow_copy_constructible_v<Manifold_3>);
+        spdlog::debug("It is no-throw copy constructible.\n");
       }
-      /// TODO: Make Manifold no-throw copy constructible
-      THEN("It is NOT no-throw copy constructible.")
+      THEN("It is no-throw copy assignable.")
       {
-        CHECK_FALSE(is_nothrow_copy_constructible_v<Manifold3>);
+        REQUIRE(is_nothrow_copy_assignable_v<Manifold_3>);
+        spdlog::debug("It is no-throw copy assignable.\n");
       }
-      /// TODO: Make Manifold no-throw copy assignable
-      THEN("It is NOT no-throw copy assignable.")
+      THEN("It is no-throw move constructible.")
       {
-        CHECK_FALSE(is_nothrow_copy_assignable_v<Manifold3>);
+        REQUIRE(is_nothrow_move_constructible_v<Manifold_3>);
+        spdlog::debug("It is no-throw move constructible.\n");
       }
-      THEN("It is move constructible.")
-      {
-        REQUIRE(is_move_constructible<Manifold3>::value);
-      }
-      /// TODO: Make Manifold no-throw move constructible
-      THEN("It is NOT no-throw move constructible.")
-      {
-        CHECK_FALSE(is_nothrow_move_constructible_v<Manifold3>);
-      }
-      /// TODO: Make Manifold no-throw move assignable
       THEN("It is no-throw move assignable.")
       {
-        CHECK_FALSE(is_nothrow_move_assignable_v<Manifold3>);
+        REQUIRE(is_nothrow_move_assignable_v<Manifold_3>);
+        spdlog::debug("It is no-throw move assignable.\n");
       }
       THEN("It is no-throw swappable.")
       {
-        REQUIRE(is_nothrow_swappable<Manifold3>::value);
+        REQUIRE(is_nothrow_swappable_v<Manifold_3>);
+        spdlog::debug("It is no-throw swappable.\n");
+      }
+      THEN("It is constructible from a FoliatedTriangulation.")
+      {
+        REQUIRE(is_constructible_v<
+                Manifold_3, foliated_triangulations::FoliatedTriangulation_3>);
+        spdlog::debug("It is constructible from a FoliatedTriangulation.\n");
+      }
+      THEN("It is constructible from 2 parameters.")
+      {
+        REQUIRE(is_constructible_v<Manifold_3, Int_precision, Int_precision>);
+        spdlog::debug("It is constructible from 2 parameters.\n");
+      }
+      THEN("It is constructible from 4 parameters.")
+      {
+        REQUIRE(is_constructible_v<Manifold_3, Int_precision, Int_precision,
+                                   double, double>);
+        spdlog::debug("It is constructible from 4 parameters.\n");
+      }
+      THEN("It is constructible from Causal_vertices.")
+      {
+        REQUIRE(is_constructible_v<Manifold_3, Causal_vertices_t<3>>);
+        spdlog::debug("It is constructible from Causal_vertices.\n");
+      }
+      THEN("It is constructible from Causal_vertices and INITIAL_RADIUS.")
+      {
+        REQUIRE(is_constructible_v<Manifold_3, Causal_vertices_t<3>, double>);
+        spdlog::debug(
+            "It is constructible from Causal_vertices and INITIAL_RADIUS.\n");
+      }
+      THEN(
+          "It is constructible from Causal_vertices, INITIAL_RADIUS, and "
+          "RADIAL_SEPARATION.")
+      {
+        REQUIRE(is_constructible_v<Manifold_3, Causal_vertices_t<3>, double,
+                                   double>);
+        spdlog::debug(
+            "It is constructible from Causal_vertices, INITIAL_RADIUS, and "
+            "RADIAL_SEPARATION.\n");
       }
     }
   }
 }
 
-SCENARIO("3-Manifold initialization", "[manifold]")
+SCENARIO("Manifold static members" * doctest::test_suite("manifold"))
 {
+  spdlog::debug("Manifold static members.\n");
+  GIVEN("A default constructed Manifold_3")
+  {
+    Manifold_3 const test{};
+    WHEN("The dimensionality of the manifold is queried.")
+    {
+      THEN("The correct dimensionality is returned.")
+      {
+        REQUIRE(test.dimension == 3);
+      }
+    }
+  }
+}
+
+SCENARIO("Manifold functions" * doctest::test_suite("manifold"))
+{
+  spdlog::debug("Manifold functions.\n");
+  GIVEN("A manifold with four vertices.")
+  {
+    Causal_vertices_t<3> causal_vertices;
+    causal_vertices.emplace_back(Point_t<3>(1, 0, 0), 1);
+    causal_vertices.emplace_back(Point_t<3>(0, 1, 0), 1);
+    causal_vertices.emplace_back(Point_t<3>(0, 0, 1), 1);
+    causal_vertices.emplace_back(Point_t<3>(RADIUS_2, RADIUS_2, RADIUS_2), 2);
+    Manifold_3 const manifold(causal_vertices);
+
+    REQUIRE(manifold.is_correct());
+    WHEN("are_vertex_timevalues_valid() is called.")
+    {
+      THEN("The vertices have valid timevalues.")
+      {
+        REQUIRE(manifold.N0() == 4);
+        CHECK(manifold.is_correct());
+        // Human verification
+        manifold.print_vertices();
+      }
+    }
+    AND_WHEN("The vertices are mis-labelled.")
+    {
+      for (std::span const vertices(manifold.get_vertices());
+           auto const&     vertex : vertices)
+      {
+        vertex->info() = std::numeric_limits<int>::max();
+      }
+      THEN("The incorrect vertex time-values are identified.")
+      {
+        CHECK_FALSE(manifold.is_correct());
+        // Human verification
+        manifold.print_vertices();
+      }
+    }
+  }
+}
+
+SCENARIO("3-Manifold initialization" * doctest::test_suite("manifold"))
+{
+  spdlog::debug("Manifold initialization.\n");
   GIVEN("A 3-manifold.")
   {
     WHEN("It is default constructed.")
     {
-      Manifold3 manifold;
+      Manifold_3 const manifold;
       THEN("The triangulation is valid.")
       {
-        REQUIRE_THAT(typeid(manifold.get_triangulation()).name(),
-                     Catch::Contains("FoliatedTriangulation"));
+        auto const& manifold_type = typeid(manifold.get_triangulation()).name();
+        std::string manifold_string{manifold_type};
+        CHECK_FALSE(manifold_string.find("FoliatedTriangulation") ==
+                    std::string::npos);
         fmt::print("The triangulation data structure is of type {}\n",
-                   typeid(manifold.get_triangulation()).name());
+                   manifold_string);
         REQUIRE(manifold.is_delaunay());
         REQUIRE(manifold.is_valid());
       }
       THEN("The geometry is of type geometry class.")
       {
-        REQUIRE_THAT(typeid(manifold.get_geometry()).name(),
-                     Catch::Contains("Geometry"));
+        auto const& geometry_type = typeid(manifold.get_geometry()).name();
+        std::string geometry_string{geometry_type};
+        CHECK_FALSE(geometry_string.find("Geometry") == std::string::npos);
         fmt::print("The Geometry data structure is of type {}\n",
-                   typeid(manifold.get_geometry()).name());
+                   geometry_string);
       }
     }
-    WHEN("It is constructed from a Delaunay triangulation.")
+    WHEN("It is constructed from causal vertices.")
     {
-      Causal_vertices cv;
-      cv.emplace_back(make_pair(Point(0, 0, 0), 1));
-      cv.emplace_back(make_pair(Point(1, 0, 1), 2));
-      cv.emplace_back(make_pair(Point(0, 1, 1), 2));
-      cv.emplace_back(make_pair(Point(1, 1, 1), 2));
-      cv.emplace_back(make_pair(Point(1, 1, 2), 3));
-      Delaunay3 dt(cv.begin(), cv.end());
-      Manifold3 manifold(dt);
-
+      Causal_vertices_t<3> causal_vertices;
+      causal_vertices.emplace_back(Point_t<3>(0, 0, 0), 1);
+      causal_vertices.emplace_back(Point_t<3>(1, 0, 0), 2);
+      causal_vertices.emplace_back(Point_t<3>(0, 1, 0), 2);
+      causal_vertices.emplace_back(Point_t<3>(0, 0, 1), 2);
+      causal_vertices.emplace_back(Point_t<3>(RADIUS_2, RADIUS_2, RADIUS_2), 3);
+      Manifold_3 const manifold(causal_vertices, 0, 1.0);
       THEN("The triangulation is valid.")
       {
-        REQUIRE_THAT(typeid(manifold.get_triangulation()).name(),
-                     Catch::Contains("FoliatedTriangulation"));
-        REQUIRE(manifold.is_correct());
+        auto const& manifold_type = typeid(manifold.get_triangulation()).name();
+        std::string manifold_string{manifold_type};
+        CHECK_FALSE(manifold_string.find("FoliatedTriangulation") ==
+                    std::string::npos);
+        fmt::print("The triangulation data structure is of type {}\n",
+                   manifold_string);
+        REQUIRE(manifold.is_delaunay());
+        REQUIRE(manifold.is_valid());
       }
       THEN("The geometry is of type geometry class.")
       {
-        REQUIRE_THAT(typeid(manifold.get_geometry()).name(),
-                     Catch::Contains("Geometry"));
+        auto const& geometry_type = typeid(manifold.get_geometry()).name();
+        std::string geometry_string{geometry_type};
+        CHECK_FALSE(geometry_string.find("Geometry") == std::string::npos);
+        fmt::print("The Geometry data structure is of type {}\n",
+                   geometry_string);
       }
       THEN("The geometry matches the triangulation.")
       {
@@ -138,32 +241,37 @@ SCENARIO("3-Manifold initialization", "[manifold]")
         REQUIRE(manifold.max_time() == 3);
         REQUIRE(manifold.check_simplices());
         // Human verification
-        print_manifold(manifold);
+        manifold.print();
         manifold.print_volume_per_timeslice();
       }
     }
     WHEN("It is constructed from a Foliated triangulation.")
     {
-      Causal_vertices cv;
-      cv.emplace_back(make_pair(Point(0, 0, 0), 1));
-      cv.emplace_back(make_pair(Point(1, 0, 1), 2));
-      cv.emplace_back(make_pair(Point(0, 1, 1), 2));
-      cv.emplace_back(make_pair(Point(1, 1, 1), 2));
-      cv.emplace_back(make_pair(Point(1, 1, 2), 3));
-      Delaunay3              dt(cv.begin(), cv.end());
-      FoliatedTriangulation3 ft(dt);
-      Manifold3              manifold(ft);
-
+      Causal_vertices_t<3> causal_vertices;
+      causal_vertices.emplace_back(Point_t<3>(0, 0, 0), 1);
+      causal_vertices.emplace_back(Point_t<3>(1, 0, 0), 2);
+      causal_vertices.emplace_back(Point_t<3>(0, 1, 0), 2);
+      causal_vertices.emplace_back(Point_t<3>(0, 0, 1), 2);
+      causal_vertices.emplace_back(Point_t<3>(RADIUS_2, RADIUS_2, RADIUS_2), 3);
+      Manifold_3 const manifold(causal_vertices, 0, 1.0);
       THEN("The triangulation is valid.")
       {
-        REQUIRE_THAT(typeid(manifold.get_triangulation()).name(),
-                     Catch::Contains("FoliatedTriangulation"));
-        REQUIRE(manifold.is_correct());
+        auto const& manifold_type = typeid(manifold.get_triangulation()).name();
+        std::string manifold_string{manifold_type};
+        CHECK_FALSE(manifold_string.find("FoliatedTriangulation") ==
+                    std::string::npos);
+        fmt::print("The triangulation data structure is of type {}\n",
+                   manifold_string);
+        REQUIRE(manifold.is_delaunay());
+        REQUIRE(manifold.is_valid());
       }
       THEN("The geometry is of type geometry class.")
       {
-        REQUIRE_THAT(typeid(manifold.get_geometry()).name(),
-                     Catch::Contains("Geometry"));
+        auto const& geometry_type = typeid(manifold.get_geometry()).name();
+        std::string geometry_string{geometry_type};
+        CHECK_FALSE(geometry_string.find("Geometry") == std::string::npos);
+        fmt::print("The Geometry data structure is of type {}\n",
+                   geometry_string);
       }
       THEN("The geometry matches the triangulation.")
       {
@@ -181,15 +289,15 @@ SCENARIO("3-Manifold initialization", "[manifold]")
         REQUIRE(manifold.max_time() == 3);
         REQUIRE(manifold.check_simplices());
         // Human verification
-        print_manifold(manifold);
+        manifold.print();
         manifold.print_volume_per_timeslice();
       }
     }
     WHEN("Constructing the minimum size triangulation.")
     {
-      auto constexpr desired_simplices  = static_cast<Int_precision>(2);
-      auto constexpr desired_timeslices = static_cast<Int_precision>(2);
-      Manifold3 manifold(desired_simplices, desired_timeslices);
+      auto constexpr desired_simplices  = 2;
+      auto constexpr desired_timeslices = 2;
+      Manifold_3 const manifold(desired_simplices, desired_timeslices);
       THEN("Triangulation is valid.") { REQUIRE(manifold.is_correct()); }
       THEN("The geometry matches the triangulation.")
       {
@@ -199,26 +307,26 @@ SCENARIO("3-Manifold initialization", "[manifold]")
         REQUIRE(manifold.faces() == manifold.N2());
         REQUIRE(manifold.check_simplices());
         // We have 1 to 8 vertices
-        auto vertices{manifold.N0()};
-        CHECK(1 <= vertices);
-        CHECK(vertices <= 8);
-        // We have 1 to 12 cells
-        auto cells{manifold.N3()};
-        CHECK(1 <= cells);
-        CHECK(cells <= 12);
+        auto number_of_vertices{manifold.N0()};
+        CHECK(number_of_vertices >= 1);
+        CHECK(number_of_vertices <= 8);
+        // We have 1 to 12 number_of_cells
+        auto number_of_cells{manifold.N3()};
+        CHECK(number_of_cells >= 1);
+        CHECK(number_of_cells <= 12);
         // We have all the time values
         CHECK(manifold.min_time() == 1);
         CHECK(manifold.max_time() == desired_timeslices);
         // Human verification
-        print_manifold(manifold);
+        manifold.print();
         manifold.print_volume_per_timeslice();
       }
     }
     WHEN("Constructing a small triangulation.")
     {
-      auto constexpr desired_simplices  = static_cast<Int_precision>(640);
-      auto constexpr desired_timeslices = static_cast<Int_precision>(4);
-      Manifold3 manifold(desired_simplices, desired_timeslices);
+      auto constexpr desired_simplices  = 640;
+      auto constexpr desired_timeslices = 4;
+      Manifold_3 const manifold(desired_simplices, desired_timeslices);
       THEN("Triangulation is valid.") { REQUIRE(manifold.is_correct()); }
       THEN("The geometry matches the triangulation.")
       {
@@ -228,15 +336,15 @@ SCENARIO("3-Manifold initialization", "[manifold]")
         REQUIRE(manifold.faces() == manifold.N2());
         REQUIRE(manifold.check_simplices());
         // Human verification
-        print_manifold(manifold);
+        manifold.print();
         manifold.print_volume_per_timeslice();
       }
     }
     WHEN("Constructing a medium triangulation.")
     {
-      auto constexpr desired_simplices  = static_cast<Int_precision>(6400);
-      auto constexpr desired_timeslices = static_cast<Int_precision>(7);
-      Manifold3 manifold(desired_simplices, desired_timeslices);
+      auto constexpr desired_simplices  = 6400;
+      auto constexpr desired_timeslices = 7;
+      Manifold_3 const manifold(desired_simplices, desired_timeslices);
       THEN("Triangulation is valid.") { REQUIRE(manifold.is_correct()); }
       THEN("The geometry matches the triangulation.")
       {
@@ -246,18 +354,19 @@ SCENARIO("3-Manifold initialization", "[manifold]")
         REQUIRE(manifold.faces() == manifold.N2());
         REQUIRE(manifold.check_simplices());
         // Human verification
-        print_manifold(manifold);
+        manifold.print();
         manifold.print_volume_per_timeslice();
       }
     }
   }
 }
 
-SCENARIO("3-Manifold function checks", "[manifold]")
+SCENARIO("3-Manifold function checks" * doctest::test_suite("manifold"))
 {
+  spdlog::debug("3-Manifold function checks.\n");
   GIVEN("The default manifold from the default triangulation")
   {
-    Manifold3 manifold;
+    Manifold_3 const manifold;
     THEN("There is only one vertex, the infinite vertex.")
     {
       auto&& vertices =
@@ -272,33 +381,35 @@ SCENARIO("3-Manifold function checks", "[manifold]")
 
   GIVEN("A 3-manifold")
   {
-    auto constexpr desired_simplices  = static_cast<Int_precision>(640);
-    auto constexpr desired_timeslices = static_cast<Int_precision>(4);
+    auto constexpr desired_simplices  = 640;
+    auto constexpr desired_timeslices = 4;
     WHEN("It is initialized.")
     {
-      Manifold3 manifold(desired_simplices, desired_timeslices);
-      THEN("Functions referencing lower level data and functions are accurate")
+      Manifold_3 const manifold(desired_simplices, desired_timeslices);
+      THEN("Functions referencing geometry data are accurate")
       {
         CHECK(manifold.N3() == manifold.get_geometry().N3);
         CHECK(manifold.N3_31() == manifold.get_geometry().N3_31);
         CHECK(manifold.N3_13() == manifold.get_geometry().N3_13);
         CHECK(manifold.N3_31_13() == manifold.get_geometry().N3_31_13);
         CHECK(manifold.N3_22() == manifold.get_geometry().N3_22);
+        CHECK(manifold.N2() == manifold.get_geometry().N2);
+        CHECK(manifold.N1() == manifold.get_geometry().N1);
         CHECK(manifold.N1_TL() == manifold.get_geometry().N1_TL);
         CHECK(manifold.N1_SL() == manifold.get_geometry().N1_SL);
         CHECK(manifold.N0() == manifold.get_geometry().N0);
-        /// TODO: Check more functions
       }
     }
   }
 }
-SCENARIO("3-Manifold copying", "[manifold]")
+SCENARIO("3-Manifold copying" * doctest::test_suite("manifold"))
 {
+  spdlog::debug("3-Manifold copying.\n");
   GIVEN("A 3-manifold.")
   {
-    auto constexpr desired_simplices  = static_cast<Int_precision>(640);
-    auto constexpr desired_timeslices = static_cast<Int_precision>(4);
-    Manifold3 manifold(desired_simplices, desired_timeslices);
+    auto constexpr desired_simplices  = 640;
+    auto constexpr desired_timeslices = 4;
+    Manifold_3 manifold(desired_simplices, desired_timeslices);
     WHEN("It is copied.")
     {
       auto manifold2 = manifold;
@@ -325,7 +436,7 @@ SCENARIO("3-Manifold copying", "[manifold]")
         CHECK(manifold2.min_time() == manifold.min_time());
         // Human verification
         fmt::print("Manifold properties:\n");
-        print_manifold(manifold);
+        manifold.print();
         manifold.print_volume_per_timeslice();
         auto cells = manifold.get_triangulation().get_delaunay().tds().cells();
         fmt::print("Cell compact container size == {}\n", cells.size());
@@ -337,20 +448,21 @@ SCENARIO("3-Manifold copying", "[manifold]")
                        .vertices()
                        .size());
         fmt::print("Copied manifold properties:\n");
-        print_manifold(manifold2);
+        manifold2.print();
         manifold2.print_volume_per_timeslice();
       }
     }
   }
 }
 
-SCENARIO("3-Manifold update geometry", "[manifold]")
+SCENARIO("3-Manifold update geometry" * doctest::test_suite("manifold"))
 {
+  spdlog::debug("3-Manifold update geometry.\n");
   GIVEN("A 3-manifold.")
   {
-    auto constexpr desired_simplices  = static_cast<Int_precision>(640);
-    auto constexpr desired_timeslices = static_cast<Int_precision>(4);
-    Manifold3 manifold(desired_simplices, desired_timeslices);
+    auto constexpr desired_simplices  = 640;
+    auto constexpr desired_timeslices = 4;
+    Manifold_3 manifold(desired_simplices, desired_timeslices);
     WHEN("We call update().")
     {
       // Get values for manifold1
@@ -379,14 +491,15 @@ SCENARIO("3-Manifold update geometry", "[manifold]")
   }
 }
 
-SCENARIO("3-Manifold mutation", "[manifold]")
+SCENARIO("3-Manifold mutation" * doctest::test_suite("manifold"))
 {
+  spdlog::debug("3-Manifold mutation.\n");
   GIVEN("A pair of 3-manifolds.")
   {
-    auto constexpr desired_simplices  = static_cast<Int_precision>(640);
-    auto constexpr desired_timeslices = static_cast<Int_precision>(4);
-    Manifold3 manifold1(desired_simplices, desired_timeslices);
-    Manifold3 manifold2(desired_simplices, desired_timeslices);
+    auto constexpr desired_simplices  = 640;
+    auto constexpr desired_timeslices = 4;
+    Manifold_3 manifold1(desired_simplices, desired_timeslices);
+    Manifold_3 const manifold2(desired_simplices, desired_timeslices);
     WHEN("We swap the triangulation of one manifold for another.")
     {
       // Get values for manifold1
@@ -438,41 +551,28 @@ SCENARIO("3-Manifold mutation", "[manifold]")
   }
 }
 
-SCENARIO("3-Manifold validation and fixing", "[manifold][!mayfail]")
+SCENARIO("3-Manifold validation and fixing" * doctest::may_fail() *
+         doctest::test_suite("manifold"))
 {
+  spdlog::debug("3-Manifold validation and fixing.\n");
   GIVEN("A (1,3) and (3,1) stacked on each other.")
   {
-    Causal_vertices cv;
-    cv.emplace_back(make_pair(Point(0, 0, 0), 1));
-    cv.emplace_back(make_pair(Point(1, 0, 1), 2));
-    cv.emplace_back(make_pair(Point(0, 1, 1), 2));
-    cv.emplace_back(make_pair(Point(1, 1, 1), 2));
-    cv.emplace_back(make_pair(Point(1, 1, 2), 3));
-    Delaunay3              dt(cv.begin(), cv.end());
-    FoliatedTriangulation3 ft(dt);
-    Manifold3              manifold(ft);
-    /// TODO: Fix is_infinite and is_vertex from cells container
-    WHEN("We ask for a container of vertices given a container of cells.")
-    {
-      auto&& vertices = manifold.get_vertices_from_cells(
-          manifold.get_triangulation().get_cells());
-      THEN("We get back the correct number of vertices.")
-      {
-        REQUIRE(vertices.size() == 5);
-        //        for (auto&& vertex : vertices)
-        //        {
-        //          cout << boolalpha
-        //               << "Vertex is a vertex: " << manifold.is_vertex(vertex)
-        //               << "\n";
-        //          cout << boolalpha << "Vertex is infinite: "
-        //               << manifold.get_triangulation().is_infinite(vertex) <<
-        //               "\n";
-        //          //          if
-        //          (!manifold.get_triangulation().is_infinite(vertex))
-        //          //          { REQUIRE(manifold.is_vertex(vertex)); }
-        //        }
-      }
-    }
+    Causal_vertices_t<3> causal_vertices;
+    causal_vertices.emplace_back(Point_t<3>(0, 0, 0), 1);
+    causal_vertices.emplace_back(Point_t<3>(1, 0, 0), 2);
+    causal_vertices.emplace_back(Point_t<3>(0, 1, 0), 2);
+    causal_vertices.emplace_back(Point_t<3>(0, 0, 1), 2);
+    causal_vertices.emplace_back(Point_t<3>(RADIUS_2, RADIUS_2, RADIUS_2), 3);
+    Manifold_3 manifold(causal_vertices, 0.0, 1.0);
+    auto       print = [&manifold](auto& vertex) {
+      fmt::print(
+          "Vertex: ({}) Timevalue: {} is a vertex: {} and is "
+                "infinite: {}\n",
+          utilities::point_to_str(vertex->point()), vertex->info(),
+          manifold.is_vertex(vertex),
+          manifold.get_triangulation().is_infinite(vertex));
+    };
+
     WHEN("It is constructed.")
     {
       THEN("The number of timeslices is correct.")
@@ -482,65 +582,49 @@ SCENARIO("3-Manifold validation and fixing", "[manifold][!mayfail]")
       }
       THEN("Every vertex in the manifold has a correct timevalue.")
       {
-        auto vertices = manifold.get_vertices();
-        for (auto& vertex : vertices)
-        {
-          CHECK(vertex->info() >= manifold.min_time());
-          CHECK(vertex->info() <= manifold.max_time());
-#ifndef NDEBUG
-          fmt::print("Vertex->info() = {}\n", vertex->info());
-#endif
-        }
+        manifold.print_vertices();
+        REQUIRE(manifold.get_triangulation().check_all_vertices());
       }
       THEN("Every cell in the manifold is correctly classified.")
       {
-        auto cells = manifold.get_triangulation().get_cells();
-        for (auto& cell : cells)
-        {
-          using Catch::Matchers::Predicate;
-          CHECK_THAT(cell->info(), Predicate<int>(
-                                       [](int const a) -> bool {
-                                         return (a == 13 || a == 22 || a == 31);
-                                       },
-                                       "Cell->info() should be 13, 22, or 31"));
-#ifndef NDEBUG
-          fmt::print("Cell->info() = {}\n", cell->info());
-#endif
-        }
+        manifold.print_cells();
+        REQUIRE(manifold.check_simplices());
       }
     }
-    /// TODO: Fix checks of vertex timevalues and simplex types
-    //    WHEN("We insert an invalid timevalue into a vertex.")
-    //    {
-    //      auto cells         = manifold.get_triangulation().get_cells();
-    //      auto broken_cell   = cells[0];
-    //      auto broken_vertex = broken_cell->vertex(0);
-    //      cout << "Info on vertex was " << broken_vertex->info() << "\n";
-    //      broken_vertex->info() = 7;
-    //      cout << "Info on vertex is now " << broken_vertex->info() << "\n";
-    //      THEN("We can detect invalid vertex timevalues.")
-    //      {
-    //        CHECK_FALSE(manifold.are_vertex_timevalues_valid(cells));
-    //      }
-    /// TODO: Write check to ensure all simplices have correct cell->info()
-    //      THEN("We can detect invalid simplex types.")
-    //      {
-    //        manifold.update();
-    //        CHECK_FALSE(manifold.are_simplex_types_valid(cells));
-    //      }
-    //    }
+    WHEN("We insert an invalid timevalue into a vertex.")
+    {
+      auto cells         = manifold.get_triangulation().get_cells();
+      auto broken_cell   = cells[0];
+      auto broken_vertex = broken_cell->vertex(0);
+      fmt::print("Info on vertex was {}\n", broken_vertex->info());
+      broken_vertex->info() = std::numeric_limits<int>::max();
+      fmt::print("Info on vertex is now {}\n", broken_vertex->info());
+      THEN("We can detect invalid vertex timevalues.")
+      {
+        CHECK_FALSE(manifold.is_correct());
+        // Human verification
+        auto bad_vertices =
+            manifold.get_triangulation().find_incorrect_vertices();
+        for_each(bad_vertices.begin(), bad_vertices.end(), print);
+      }
+      THEN("We can detect invalid cells.")
+      {
+        manifold.update();
+        manifold.print_cells();
+        CHECK_FALSE(manifold.check_simplices());
+      }
+    }
   }
   GIVEN("A medium sized manifold.")
   {
-    auto constexpr desired_simplices  = static_cast<Int_precision>(6400);
-    auto constexpr desired_timeslices = static_cast<Int_precision>(7);
+    auto constexpr desired_simplices  = 6400;
+    auto constexpr desired_timeslices = 7;
     WHEN("It is constructed.")
     {
-      Manifold3 manifold(desired_simplices, desired_timeslices);
+      Manifold_3 const manifold(desired_simplices, desired_timeslices);
       THEN("The triangulation is valid and Delaunay.")
       {
-        REQUIRE(manifold.is_valid());
-        REQUIRE(manifold.is_delaunay());
+        REQUIRE(manifold.is_correct());
       }
       THEN("The geometry matches the triangulation.")
       {
@@ -548,7 +632,7 @@ SCENARIO("3-Manifold validation and fixing", "[manifold][!mayfail]")
         REQUIRE(manifold.vertices() == manifold.N0());
         REQUIRE(manifold.edges() == manifold.N1());
         REQUIRE(manifold.faces() == manifold.N2());
-        REQUIRE(manifold.number_of_simplices() == manifold.N3());
+        REQUIRE(manifold.simplices() == manifold.N3());
       }
       THEN("The number of timeslices is correct.")
       {
@@ -557,31 +641,11 @@ SCENARIO("3-Manifold validation and fixing", "[manifold][!mayfail]")
       }
       THEN("Every vertex in the manifold has a correct timevalue.")
       {
-        auto vertices = manifold.get_vertices();
-        for (auto& vertex : vertices)
-        {
-          CHECK(vertex->info() >= manifold.min_time());
-          CHECK(vertex->info() <= manifold.max_time());
-#ifdef DETAILED_DEBUGGING
-          fmt::print("Vertex->info() = {}\n", vertex->info());
-#endif
-        }
+        REQUIRE(manifold.get_triangulation().check_all_vertices());
       }
       THEN("Every cell in the manifold is correctly classified.")
       {
-        auto cells = manifold.get_triangulation().get_cells();
-        for (auto& cell : cells)
-        {
-          using Catch::Matchers::Predicate;
-          CHECK_THAT(cell->info(), Predicate<int>(
-                                       [](int const a) -> bool {
-                                         return (a == 13 || a == 22 || a == 31);
-                                       },
-                                       "Cell->info() should be 13, 22, or 31"));
-#ifdef DETAILED_DEBUGGING
-          fmt::print("Cell->info() = {}\n", cell->info());
-#endif
-        }
+        REQUIRE(manifold.check_simplices());
       }
     }
   }

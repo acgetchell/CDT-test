@@ -1,0 +1,30 @@
+{
+  "name": "cdt-plusplus",
+  "version": "0.1.8",
+  "dependencies": [
+    "doctest",
+    "date",
+    "docopt",
+    "fmt",
+    "ms-gsl",
+    "eigen3",
+    "pcg",
+    "spdlog",
+    "tbb",
+    "tl-expected",
+    "tl-function-ref",
+    {
+      "name": "yasm-tool",
+      "platform": "windows"
+    },
+    {
+      "name": "cgal",
+      "features": ["qt"],
+      "platform": "osx"
+    },
+    {
+      "name": "cgal",
+      "platform": "!osx"
+    }
+  ]
+}

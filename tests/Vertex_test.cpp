@@ -1,130 +1,246 @@
-/// Causal Dynamical Triangulations in C++ using CGAL
-///
-/// Copyright © 2017-2019 Adam Getchell
-///
-/// Tests for inserting and deleting vertices.
-///
+/*******************************************************************************
+ Causal Dynamical Triangulations in C++ using CGAL
+
+ Copyright © 2017 Adam Getchell
+ ******************************************************************************/
+
 /// @file Vertex_test.cpp
-/// @brief Tests on vertices
+/// @brief Tests on points and vertices in foliated Delaunay triangulations
 /// @author Adam Getchell
+/// @details Tests for inserting and deleting vertices.
 
-#include <Manifold.hpp>
-#include <catch2/catch.hpp>
+#include <doctest/doctest.h>
 
-SCENARIO("Vertex operations", "[vertex]")
+#include <numbers>
+
+#include "Manifold.hpp"
+
+using namespace manifolds;
+
+static inline auto constinit const RADIUS_2 =
+    2.0 * std::numbers::inv_sqrt3_v<double>;
+
+SCENARIO("Point operations" * doctest::test_suite("vertex"))
 {
-  GIVEN("A Delaunay triangulation.")
+  using Point = Point_t<3>;
+  GIVEN("Some points.")
   {
-    Delaunay3 universe;
+    auto point_1 = Point(0, 0, 0);
+    auto point_2 = Point(0, 0.0, 0.0);
+    auto point_3 = Point(1, 1, 1);
+    WHEN("They are compared.")
+    {
+      THEN("Similar points are equal.") { REQUIRE(point_1 == point_2); }
+      THEN("Dissimilar points are not equal.") { REQUIRE(point_1 != point_3); }
+    }
+  }
+}
 
+SCENARIO("Vertex operations" * doctest::test_suite("vertex"))
+{
+  using Causal_vertices = Causal_vertices_t<3>;
+  using Manifold        = Manifold_3;
+  using Point           = Point_t<3>;
+  GIVEN("A foliated Delaunay triangulation.")
+  {
+    Causal_vertices causal_vertices;
     WHEN("A vertex is inserted.")
     {
-      universe.insert(Point(0, 0, 0));
+      causal_vertices.emplace_back(Point(0, 0, 0), 1);
+      Manifold const manifold(causal_vertices, 0, 1);
+      THEN("The vertex is in the manifold.")
+      {
+        auto vertex = manifold.get_vertices();
+        REQUIRE(manifold.is_vertex(vertex.front()));
+      }
 
       THEN("The Delaunay triangulation is valid.")
       {
-        REQUIRE(universe.tds().is_valid());
+        REQUIRE(manifold.is_valid());
       }
 
-      THEN("We should have 1 point.")
+      THEN("There is 1 vertex.") { REQUIRE(manifold.N0() == 1); }
+
+      THEN("There are no edges.") { REQUIRE(manifold.N1() == 0); }
+
+      THEN("A 1 vertex manifold has dimension 0.")
       {
-        REQUIRE(universe.number_of_vertices() == 1);
+        REQUIRE(manifold.dimensionality() == 0);
       }
 
-      THEN("A 1 point triangulation has dimension 0.")
+      THEN("The vertex is valid.")
       {
-        REQUIRE(universe.dimension() == 0);
+        fmt::print("When a causal vertex is inserted, the vertices are:\n");
+        manifold.print_vertices();
+        CHECK(manifold.get_triangulation().check_all_vertices());
       }
     }
 
-    WHEN("Two vertices are inserted.")
+    AND_WHEN("Two vertices are inserted.")
     {
-      universe.insert(Point(0, 0, 0));
-      universe.insert(Point(1, 0, 0));
+      causal_vertices.emplace_back(Point(0, 0, 0), 1);
+      causal_vertices.emplace_back(Point(1, 0, 0), 2);
+      Manifold const manifold(causal_vertices, 0, 1);
+
+      THEN("The vertices are in the manifold.")
+      {
+        auto vertex = manifold.get_vertices();
+        REQUIRE(manifold.is_vertex(vertex.front()));
+        REQUIRE(manifold.is_vertex(vertex.back()));
+      }
 
       THEN("The Delaunay triangulation is valid.")
       {
-        REQUIRE(universe.tds().is_valid());
+        REQUIRE(manifold.is_valid());
       }
 
-      THEN("We should have 2 points.")
+      THEN("There are 2 vertices.") { REQUIRE(manifold.N0() == 2); }
+
+      THEN("There is 1 edge.") { REQUIRE(manifold.N1() == 1); }
+
+      THEN("There are no faces.") { REQUIRE(manifold.N2() == 0); }
+
+      THEN("A 2 vertex manifold has dimension 1.")
       {
-        REQUIRE(universe.number_of_vertices() == 2);
+        REQUIRE(manifold.dimensionality() == 1);
       }
 
-      THEN("A 2 point triangulation has dimension 1.")
+      THEN("The vertices are valid.")
       {
-        REQUIRE(universe.dimension() == 1);
+        fmt::print("When 2 causal vertices are inserted, the vertices are:\n");
+        manifold.print_vertices();
+        CHECK(manifold.get_triangulation().check_all_vertices());
       }
     }
 
-    WHEN("Three vertices are inserted.")
+    AND_WHEN("Three vertices are inserted.")
     {
-      universe.insert(Point(0, 0, 0));
-      universe.insert(Point(1, 0, 0));
-      universe.insert(Point(0, 1, 0));
+      causal_vertices.emplace_back(Point(0, 0, 0), 1);
+      causal_vertices.emplace_back(Point(1, 0, 0), 2);
+      causal_vertices.emplace_back(Point(0, 1, 0), 2);
+      Manifold manifold(causal_vertices, 0, 1);
+
+      THEN("The vertices are in the manifold.")
+      {
+        auto vertices = manifold.get_vertices();
+        auto require  = [&manifold](auto& vertex) {
+          REQUIRE(manifold.is_vertex(vertex));
+        };
+        std::for_each(vertices.begin(), vertices.end(), require);
+      }
 
       THEN("The Delaunay triangulation is valid.")
       {
-        REQUIRE(universe.tds().is_valid());
+        REQUIRE(manifold.is_valid());
       }
 
-      THEN("We should have 3 points.")
+      THEN("There are 3 vertices.") { REQUIRE(manifold.N0() == 3); }
+
+      THEN("There are 3 edges.") { REQUIRE(manifold.N1() == 3); }
+
+      THEN("There is 1 face.") { REQUIRE(manifold.N2() == 1); }
+
+      THEN("There are no simplices.") { REQUIRE(manifold.N3() == 0); }
+
+      THEN("A 3 vertex manifold has dimension 2.")
       {
-        REQUIRE(universe.number_of_vertices() == 3);
+        REQUIRE(manifold.dimensionality() == 2);
       }
 
-      THEN("A 3 point triangulation has dimension 2.")
+      THEN("The vertices are valid.")
       {
-        REQUIRE(universe.dimension() == 2);
+        fmt::print("When 3 causal vertices are inserted, the vertices are:\n");
+        manifold.print_vertices();
+        CHECK(manifold.get_triangulation().check_all_vertices());
       }
     }
 
-    WHEN("Four vertices are inserted.")
+    AND_WHEN("Four vertices are inserted.")
     {
-      universe.insert(Point(0, 0, 0));
-      universe.insert(Point(1, 0, 0));
-      universe.insert(Point(0, 1, 0));
-      universe.insert(Point(0, 0, 1));
+      causal_vertices.emplace_back(Point(0, 0, 0), 1);
+      causal_vertices.emplace_back(Point(1, 0, 0), 2);
+      causal_vertices.emplace_back(Point(0, 1, 0), 2);
+      causal_vertices.emplace_back(Point(0, 0, 1), 2);
+      Manifold manifold(causal_vertices, 0, 1);
+
+      THEN("The vertices are in the manifold.")
+      {
+        auto vertices = manifold.get_vertices();
+        auto require  = [&manifold](auto& vertex) {
+          REQUIRE(manifold.is_vertex(vertex));
+        };
+        std::for_each(vertices.begin(), vertices.end(), require);
+      }
 
       THEN("The Delaunay triangulation is valid.")
       {
-        REQUIRE(universe.tds().is_valid());
+        REQUIRE(manifold.is_valid());
       }
 
-      THEN("We should have 4 points.")
+      THEN("There are 4 vertices.") { REQUIRE(manifold.N0() == 4); }
+
+      THEN("There are 6 edges.") { REQUIRE(manifold.N1() == 6); }
+
+      THEN("There are 4 faces.") { REQUIRE(manifold.N2() == 4); }
+
+      THEN("There is a simplex.") { REQUIRE(manifold.N3() == 1); }
+
+      THEN("A 4 vertex manifold has dimension 3.")
       {
-        REQUIRE(universe.number_of_vertices() == 4);
+        REQUIRE(manifold.dimensionality() == 3);
       }
 
-      THEN("A 4 point triangulation has dimension 3.")
+      THEN("The vertices are valid.")
       {
-        REQUIRE(universe.dimension() == 3);
+        fmt::print(
+            "When 4 causal vertices are inserted, there is a simplex:\n");
+        manifold.print_cells();
+        CHECK(manifold.get_triangulation().check_all_vertices());
       }
     }
 
-    WHEN("Six vertices are inserted.")
+    AND_WHEN("Five vertices are inserted.")
     {
-      universe.insert(Point(0, 0, 0));
-      universe.insert(Point(1, 0, 0));
-      universe.insert(Point(0, 1, 0));
-      universe.insert(Point(0, 0, 1));
-      universe.insert(Point(2, 2, 2));
-      universe.insert(Point(-1, 0, 1));
+      causal_vertices.emplace_back(Point(0, 0, 0), 1);
+      causal_vertices.emplace_back(Point(1, 0, 0), 2);
+      causal_vertices.emplace_back(Point(0, 1, 0), 2);
+      causal_vertices.emplace_back(Point(0, 0, 1), 2);
+      causal_vertices.emplace_back(Point(RADIUS_2, RADIUS_2, RADIUS_2), 3);
+      Manifold manifold(causal_vertices, 0, 1);
+
+      THEN("The vertices are in the manifold.")
+      {
+        auto vertices = manifold.get_vertices();
+        auto require  = [&manifold](auto& vertex_candidate) {
+          REQUIRE(manifold.is_vertex(vertex_candidate));
+        };
+        std::for_each(vertices.begin(), vertices.end(), require);
+      }
 
       THEN("The Delaunay triangulation is valid.")
       {
-        REQUIRE(universe.tds().is_valid());
+        REQUIRE(manifold.is_valid());
       }
 
-      THEN("We should have 6 points.")
+      THEN("There are 5 vertices.") { REQUIRE(manifold.N0() == 5); }
+
+      THEN("There are 9 edges.") { REQUIRE(manifold.N1() == 9); }
+
+      THEN("There are 7 faces.") { REQUIRE(manifold.N2() == 7); }
+
+      THEN("There are 2 simplexes.") { REQUIRE(manifold.N3() == 2); }
+
+      THEN("A 5 vertex manifold still has dimension 3.")
       {
-        REQUIRE(universe.number_of_vertices() == 6);
+        REQUIRE(manifold.dimensionality() == 3);
       }
 
-      THEN("A 6 point triangulation still has dimension 3.")
+      THEN("The vertices are valid.")
       {
-        REQUIRE(universe.dimension() == 3);
+        fmt::print(
+            "When 5 causal vertices are inserted, there are 2 simplices:\n");
+        manifold.print_cells();
+        CHECK(manifold.get_triangulation().check_all_vertices());
       }
     }
   }

@@ -1,40 +1,50 @@
-/// Causal Dynamical Triangulations in C++ using CGAL
-///
-/// Copyright © 2019 Adam Getchell
-///
-/// Performs the set of Pachner moves on a manifold exploring
-/// all possible triangulations.
+/*******************************************************************************
+ Causal Dynamical Triangulations in C++ using CGAL
+
+ Copyright © 2019 Adam Getchell
+ ******************************************************************************/
 
 /// @file Apply_move.hpp
 /// @brief Apply Pachner moves to foliated Delaunay triangulations
-///
-/// Return by value since RVO applies
-///
-/// @todo try-catch in constexpr functions (P1002R!) are in C++20
+/// @author Adam Getchell
 
 #ifndef CDT_PLUSPLUS_APPLY_MOVE_HPP
 #define CDT_PLUSPLUS_APPLY_MOVE_HPP
 
-#include <functional>
+#include <spdlog/spdlog.h>
 
+#include <functional>
+#include <string>
+#include <tl/expected.hpp>
+#include <tl/function_ref.hpp>
+
+/// @brief An applicative function similar to std::apply, but on manifolds
 /// @tparam ManifoldType The type (topology, dimensionality) of manifold
+/// @tparam ExpectedType The result of the move on the manifold
 /// @tparam FunctionType The type of move applied to the manifold
 /// @param t_manifold The manifold on which to make the Pachner move
 /// @param t_move The Pachner move
-/// @return The t_manifold upon which the Pachner t_move has been applied
+/// @return The expected or unexpected result in a tl::expected<T,E>
+/// @see https://tl.tartanllama.xyz/en/latest/api/function_ref.html
+/// @see https://tl.tartanllama.xyz/en/latest/api/expected.html
 template <typename ManifoldType,
-          typename FunctionType = std::function<ManifoldType(ManifoldType&)>>
-constexpr decltype(auto) apply_move(ManifoldType&& t_manifold,
-                                    FunctionType&& t_move)
-// try
+          typename ExpectedType = tl::expected<ManifoldType, std::string>,
+          typename FunctionType = tl::function_ref<ExpectedType(ManifoldType&)>>
+auto constexpr apply_move(ManifoldType&& t_manifold,
+                          FunctionType   t_move) noexcept -> decltype(auto)
 {
-  return std::invoke(std::forward<FunctionType>(t_move),
-                     std::forward<ManifoldType>(t_manifold));
+  if (auto result = std::invoke(t_move, std::forward<ManifoldType>(t_manifold));
+      result)
+  {
+    return result;
+  }
+  else  // NOLINT
+  {
+    // Log errors
+    spdlog::debug("apply_move called.\n");
+    spdlog::debug("{}", result.error());
+    return result;
+  }
 }
-// catch (std::exception const& except)
-//{
-//  std::cerr << "apply_move failed: " << except.what() << "\n";
-//  throw;
-//}
 
 #endif  // CDT_PLUSPLUS_APPLY_MOVE_HPP

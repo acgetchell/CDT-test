@@ -5,7 +5,7 @@
 
 cd ..
 rm -rf build/
-cmake --preset build
+cmake --preset fast-build
 cmake --build build
 cd build || exit
 ctest --output-on-failure -j2

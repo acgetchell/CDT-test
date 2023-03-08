@@ -1,23 +1,24 @@
-/// Causal Dynamical Triangulations in C++ using CGAL
-///
-/// Copyright © 2014-2020 Adam Getchell
-///
-/// A program that generates spacetimes
+/*******************************************************************************
+ Causal Dynamical Triangulations in C++ using CGAL
+
+ Copyright © 2018  Adam Getchell
+ ******************************************************************************/
 
 /// @file initialize.cpp
 /// @brief Generates initial spacetimes
 /// @author Adam Getchell
 
-#include "Manifold.hpp"
 #include <docopt.h>
+
+#include "Manifold.hpp"
 
 using namespace std;
 
 /// Help message parsed by docopt into options
-static constexpr char USAGE[]{
+static constexpr string_view USAGE{
     R"(Causal Dynamical Triangulations in C++ using CGAL.
 
-Copyright (c) 2014-2020 Adam Getchell
+Copyright (c) 2014 Adam Getchell
 
 A program that generates d-dimensional triangulated spacetimes
 with a defined causal structure. Specify the topology of the triangulation
@@ -42,42 +43,36 @@ Options:
   -o --output                 Save triangulation into OFF file
 )"};
 
-auto main(int argc, char* const argv[]) -> int
+auto main(int argc, char* const argv[]) -> int  // NOLINT
 try
 {
   // docopt option parser
-  gsl::cstring_span<>        usage_string = gsl::ensure_z(USAGE);
-  map<string, docopt::value> args =
-      docopt::docopt(gsl::to_string(usage_string), {argv + 1, argv + argc},
-                     true, "initializer 1.0");
+  std::string                                             usage_string{USAGE};
+  std::map<std::string, docopt::value, std::less<string>> args = docopt::docopt(
+      usage_string, {argv + 1, argv + argc}, true, "initializer 1.0");
 
   auto simplices         = stoll(args["-n"].asString());
   auto timeslices        = stoll(args["-t"].asString());
   auto dimensions        = stoll(args["-d"].asString());
-  auto initial_radius    = stold(args["--init"].asString());
-  auto foliation_spacing = stold(args["--foliate"].asString());
+  auto initial_radius    = stod(args["--init"].asString());
+  auto foliation_spacing = stod(args["--foliate"].asString());
   auto save_file         = args["--output"].asBool();
 
   // Initialize triangulation
-  Manifold3 universe;
+  manifolds::Manifold_3 universe;
 
   // Topology of simulation
-  topology_type topology;
-  if (args["--spherical"].asBool()) { topology = topology_type::SPHERICAL; }
-  else
-  {
-    topology = topology_type::TOROIDAL;
-  }
+  auto topology = (args["--spherical"].asBool()) ? topology_type::SPHERICAL
+                                                 : topology_type::TOROIDAL;
 
   // Display job parameters
-  fmt::print("Topology is {}\n", topology);
+  fmt::print("Topology is {}\n", utilities::topology_to_str(topology));
   fmt::print("Number of dimensions = {}\n", dimensions);
   fmt::print("Number of desired simplices = {}\n", simplices);
   fmt::print("Number of desired timeslices = {}\n", timeslices);
   fmt::print("Initial radius = {}\n", initial_radius);
   fmt::print("Foliation spacing = {}\n", foliation_spacing);
-  fmt::print("User = {}\n", getEnvVar("USER"));
-  fmt::print("Hostname = {}\n", hostname());
+
   if (save_file) { fmt::print("Output will be saved.\n"); }
 
   if (simplices < 2 || timeslices < 2)
@@ -92,38 +87,33 @@ try
       if (dimensions == 3)
       {
         // Start your run
-        Manifold3 populated_universe(static_cast<Int_precision>(simplices),
-                                     static_cast<Int_precision>(timeslices),
-                                     initial_radius, foliation_spacing);
-        swap(universe, populated_universe);
+        manifolds::Manifold_3 populated_universe(
+            static_cast<Int_precision>(simplices),
+            static_cast<Int_precision>(timeslices), initial_radius,
+            foliation_spacing);
+        swap(populated_universe, universe);
       }
-      else
-      {
-        throw invalid_argument("Currently, dimensions cannot be >3.");
-      }
+      else { throw invalid_argument("Currently, dimensions cannot be >3."); }
       break;
     case topology_type::TOROIDAL:
       throw invalid_argument("Toroidal triangulations not yet supported.");
+      break;
+    default: throw domain_error("Simulation topology not parsed.");
   }
-  print_manifold(universe);
-  universe.get_triangulation().print_volume_per_timeslice();
+  universe.print();
+  universe.print_volume_per_timeslice();
   fmt::print("Final number of simplices: {}\n", universe.N3());
-  if (save_file)
-  {
-    write_file(universe, topology, static_cast<Int_precision>(dimensions),
-               static_cast<Int_precision>(universe.N3()),
-               static_cast<Int_precision>(timeslices));
-  }
-  return 0;
+  if (save_file) { utilities::write_file(universe); }
+  return EXIT_SUCCESS;
 }
-catch (invalid_argument& InvalidArgument)
+catch (invalid_argument const& InvalidArgument)
 {
-  fmt::print(cerr, "{}\n", InvalidArgument.what());
-  fmt::print(cerr, "Invalid parameter ... exiting.\n");
-  return 1;
+  spdlog::critical("{}\n", InvalidArgument.what());
+  spdlog::critical("Invalid parameter ... Exiting.\n");
+  return EXIT_FAILURE;
 }
 catch (...)
 {
-  fmt::print(cerr, "Something went wrong ... exiting.\n");
-  return 1;
+  spdlog::critical("Something went wrong ... Exiting.\n");
+  return EXIT_FAILURE;
 }

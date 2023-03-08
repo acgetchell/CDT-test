@@ -1,42 +1,14 @@
-/// Causal Dynamical Triangulations in C++ using CGAL
-///
-/// Copyright © 2017-2019 Adam Getchell
-///
-/// Main Catch test driver
-///
+/*******************************************************************************
+ Causal Dynamical Triangulations in C++ using CGAL
+
+ Copyright © 2017 Adam Getchell
+ ******************************************************************************/
+
 /// @file main.cpp
-/// @brief Catch test driver
-/// @author https://github.com/catchorg and Adam Getchell
+/// @brief doctest driver
+/// @author https://github.com/doctest/doctest
+/// @details Main doctest driver
 
-#define CATCH_CONFIG_RUNNER
-#define CATCH_CONFIG_NO_CPP17_UNCAUGHT_EXCEPTIONS
-#define CATCH_CONFIG_CPP17_STRING_VIEW
-#define CATCH_CONFIG_CPP17_VARIANT
-#define CATCH_CONFIG_CPP17_OPTIONAL
-#define CATCH_CONFIG_CPP17_BYTE
-#include <catch2/catch.hpp>
-
-auto main(int argc, char* argv[]) -> int
-{
-  Catch::Session session;  // There must be exactly one instance
-
-  // writing to session.configData() here sets defaults
-  // this is the preferred way to set them
-
-  int returnCode = session.applyCommandLine(argc, argv);
-  if (returnCode != 0)
-  {  // Indicates a command line error
-    return returnCode;
-  }
-
-  // writing to session.configData() or session.Config() here
-  // overrides command line args
-  // only do this if you know you need to
-
-  int numFailed = session.run();
-
-  // numFailed is clamped to 255 as some unixes only use the lower 8 bits.
-  // This clamping has already been applied, so just return it here
-  // You can also do any post run clean-up here
-  return numFailed;
-}
+#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
+#define DOCTEST_CONFIG_SUPER_FAST_ASSERTS
+#include <doctest/doctest.h>

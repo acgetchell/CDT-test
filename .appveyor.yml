@@ -1,31 +1,15 @@
-version: 0.1.{build}
-
-platform:
-  - x64
-
-environment:
-#  APPVEYOR_SAVE_CACHE_ON_ERROR: true
-  VCPKG_DEFAULT_TRIPLET: x64-windows
-
-cache:
-  - c:\tools\vcpkg\installed\
-
-
-image:
-  - Visual Studio 2017
+version: 0.1.8.{build}
 
 skip_tags: true
 
 skip_branch_with_pr: true
 
-build:
-  verbosity: detailed
+image:
+  - Visual Studio 2022
 
-clone_folder: c:\projects\cdt-test
+clone_folder: c:\projects\cdt-plusplus
 
 shallow_clone: true
-
-configuration: Release
 
 clone_script:
   - cmd: >-
@@ -34,69 +18,48 @@ clone_script:
       && git checkout -qf %APPVEYOR_REPO_COMMIT%
       && git submodule update --init --recursive
 
+environment:
+  APPVEYOR_SAVE_CACHE_ON_ERROR : true
+  VCPKG_DEFAULT_TRIPLET: x64-windows
+  VCPKG_ROOT: c:\tools\vcpkg
+
+cache:
+  - c:\Users\appveyor\AppData\Local\vcpkg\archives\
+  - c:\tools\vcpkg\packages\
+
 install:
-#  - if not exist "c:\projects\dev" (
-#      mkdir c:\projects\dev
-#      cd c:\projects\dev
-#      set NINJA_URL="https://github.com/ninja-build/ninja/releases/download/v1.8.2/ninja-win.zip"
-#      appveyor DownloadFile %NINJA_URL% -FileName ninja.zip
-#      7z x ninja.zip -oC:\projects\dev\ninja > nul
-#    )
-  - mkdir C:\projects\dev
-  - cd C:\projects\dev
-  # Install Ninja
-  - set NINJA_URL="https://github.com/ninja-build/ninja/releases/download/v1.9.0/ninja-win.zip"
-  - appveyor DownloadFile %NINJA_URL% -FileName ninja.zip
-  - 7z x ninja.zip -oC:\projects\dev\ninja > nul
-  - set PATH=%PATH%;C:\projects\dev\ninja
-  - ninja --version
-  - set CMAKE_MAKE_PROGRAM=C:\projects\dev\ninja\ninja.exe
-  # Verify CMake
-  - cmake --version
+  # Setup vcpkg
   - cd c:\tools\vcpkg
-  # Update ports
   - git pull
-  # Update vcpkg
   - .\bootstrap-vcpkg.bat
-  # Enable integration for Visual Studio/MSBuild
+  - set PATH=%PATH%;%VCPKG_ROOT%
   - vcpkg integrate install
-  # Install required libraries
-  - vcpkg install catch2
-  - vcpkg install docopt
-  - vcpkg install fmt
-  - vcpkg install ms-gsl
-  - vcpkg install eigen3
-  - vcpkg install tbb
-  - vcpkg install cgal
-  # Upgrade required libraries
-  - vcpkg upgrade --no-dry-run
-  - vcpkg list
+  - cmake --version
   # Setup Clang-cl
   - set PATH=%PATH%;"C:\Program Files\LLVM\bin"
   - clang-cl -v
   - set CC=clang-cl -mrtm
   - set CXX=clang-cl -mrtm
-  # Visual Studio 2017
-  - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat"
+  # Visual Studio 2022
+  - call "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"
   - set CMAKE_CXX_COMPILER="C:\Program Files\LLVM\bin\clang-cl"
-  # Remove conflicting OpenSSL directories
-#  - rd /s /q c:\OpenSSL-v11-Win32
-#  - rd /s /q c:\OpenSSL-v11-Win64
 
+platform:
+  - x64
 
+configuration: Release
 
-before_build:
-  - cd %APPVEYOR_BUILD_FOLDER%
+build:
+  verbosity: detailed
 
 build_script:
-  - mkdir build
-  - cd build
-#  - cmake -G Ninja -DCMAKE_MAKE_PROGRAM=c:\projects\dev\ninja\ninja.exe -DVCPKG_TARGET_TRIPLET=x86-windows -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake ..
-  - cmake -G Ninja -D CMAKE_BUILD_TYPE=Release -D CMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake ..
-  - cmake --build .
+  - cd %APPVEYOR_BUILD_FOLDER%
+  - cmake --preset=appveyor
+  - cmake --build build
 
-on_success:
-  - cmake --build . --target test & exit 0
+#on_success:
+#  - cd build
+#  - ctest --output-on-failure -j2
 
 notifications:
   - provider: Email

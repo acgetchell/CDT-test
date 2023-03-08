@@ -1,38 +1,73 @@
+# C++.gitignore
+
 # Compiled Object files
 *.slo
 *.lo
-*.o
-*.obj
-
-# Precompiled Headers
-*.gch
-*.pch
 
 # Compiled Dynamic libraries
 *.so
 *.dylib
-*.dll
-
-# Fortran module files
-*.mod
 
 # Compiled Static libraries
 *.lai
 *.la
-*.a
-*.lib
 
-# Executables
-*.exe
-*.out
-*.app
+# Precompiled headers
+*.pch
 
-# IDE
-.idea/
-cmake-build-debug
-cmake-build-release
-cmake-build-relwithdebinfo
-build/
-
-# MacOS
+# OS X temporary files that should never be committed
 .DS_Store
+*.swp
+*.lock
+profile
+
+# Build, Doc, and Testing dirs
+/build*
+html/
+/cmake-build*
+cov-int
+/out/*
+/Testing
+
+# Editor files
+.clang_complete
+.idea
+.vs*
+xcode/
+CMakeSEttings.json
+
+# Program/script executables
+cdt_tests
+grid_d
+
+# Output files
+output*
+errors
+*.off
+*.dat
+slurm-*.out
+*PVS-Studio*
+
+# Instrumentation
+*.trace
+build-wrapper-macosx-x86
+*.scannerwork
+bw-output/*
+coverage.info
+
+# Cruft
+*.old.*
+*.bak
+
+# SourceTrail
+*.srctrlbm
+*.srctrldb*
+*.srctrlprj
+
+# Pipenv
+Pipfile
+scanresults/
+venv
+
+# vcpkg
+vcpkg_installed

@@ -1,67 +1,79 @@
-/// Causal Dynamical Triangulations in C++ using CGAL
-///
-/// Copyright © 2018-2020 Adam Getchell
-///
-/// Tests of geometry data structure
+/*******************************************************************************
+ Causal Dynamical Triangulations in C++ using CGAL
+
+ Copyright © 2018 Adam Getchell
+ ******************************************************************************/
 
 /// @file Geometry_test.cpp
 /// @brief Tests of new geometry data structure
 /// @author Adam Getchell
 
 #include "Geometry.hpp"
-#include <catch2/catch.hpp>
+
+#include <doctest/doctest.h>
 
 using namespace std;
+using namespace foliated_triangulations;
 
-SCENARIO("3-Geometry special member and swap properties", "[geometry]")
+SCENARIO("Geometry special member and swap properties" *
+         doctest::test_suite("geometry"))
 {
+  spdlog::debug("Geometry special member and swap properties.\n");
   GIVEN("A 3-dimensional geometry.")
   {
     WHEN("Special members are examined.")
     {
       THEN("It is trivially destructible.")
       {
-        REQUIRE(is_trivially_destructible_v<Geometry3>);
+        REQUIRE(is_trivially_destructible_v<Geometry_3>);
+        spdlog::debug("It is trivially destructible.\n");
       }
       THEN("It is no-throw default constructible.")
       {
-        CHECK(is_nothrow_default_constructible_v<Geometry3>);
+        REQUIRE(is_nothrow_default_constructible_v<Geometry_3>);
+        spdlog::debug("It is no-throw default constructible.\n");
       }
       THEN("It is no-throw copy constructible.")
       {
-        CHECK(is_nothrow_copy_constructible_v<Geometry3>);
+        REQUIRE(is_nothrow_copy_constructible_v<Geometry_3>);
+        spdlog::debug("It is no-throw copy constructible.\n");
       }
       THEN("It is no-throw copy assignable.")
       {
-        CHECK(is_nothrow_copy_assignable_v<Geometry3>);
+        REQUIRE(is_nothrow_copy_assignable_v<Geometry_3>);
+        spdlog::debug("It is no-throw copy assignable.\n");
       }
       THEN("It is no-throw move constructible.")
       {
-        REQUIRE(is_nothrow_move_constructible_v<Geometry3>);
+        REQUIRE(is_nothrow_move_constructible_v<Geometry_3>);
+        spdlog::debug("It is no-throw move constructible.\n");
       }
       THEN("It is no-throw move assignable.")
       {
-        REQUIRE(is_nothrow_move_assignable_v<Geometry3>);
+        REQUIRE(is_nothrow_move_assignable_v<Geometry_3>);
+        spdlog::debug("It is no-throw move assignable.\n");
       }
       THEN("It is no-throw swappable.")
       {
-        REQUIRE(is_nothrow_swappable_v<Geometry3>);
+        REQUIRE(is_nothrow_swappable_v<Geometry_3>);
+        spdlog::debug("It is no-throw swappable.\n");
       }
     }
   }
 }
 
-SCENARIO("3-Geometry classification", "[geometry]")
+SCENARIO("3-Geometry classification" * doctest::test_suite("geometry"))
 {
+  spdlog::debug("3-Geometry classification.\n");
   GIVEN("A small 3-dimensional geometry.")
   {
     WHEN("It is constructed with a Delaunay triangulation.")
     {
-      auto constexpr desired_simplices  = static_cast<Int_precision>(72);
-      auto constexpr desired_timeslices = static_cast<Int_precision>(3);
-      FoliatedTriangulation3 triangulation(desired_simplices,
-                                           desired_timeslices);
-      Geometry3              geometry(triangulation);
+      auto constexpr desired_simplices  = 72;
+      auto constexpr desired_timeslices = 3;
+      FoliatedTriangulation_3 const triangulation(desired_simplices,
+                                                  desired_timeslices);
+      Geometry_3              geometry(triangulation);
       THEN("The Delaunay triangulation is described by the geometry.")
       {
         fmt::print("There are {} simplices ...\n", geometry.N3);
@@ -105,13 +117,14 @@ SCENARIO("3-Geometry classification", "[geometry]")
   }
 }
 
-SCENARIO("3-Geometry initialization", "[geometry]")
+SCENARIO("3-Geometry initialization" * doctest::test_suite("geometry"))
 {
+  spdlog::debug("3-Geometry initialization.\n");
   GIVEN("A 3-dimensional geometry.")
   {
     WHEN("It is default constructed.")
     {
-      Geometry3 geometry;
+      Geometry_3 geometry;
       THEN("All data members are zero-initialized.")
       {
         REQUIRE(geometry.N3 == 0);
@@ -125,13 +138,13 @@ SCENARIO("3-Geometry initialization", "[geometry]")
         REQUIRE(geometry.N0 == 0);
       }
     }
-    WHEN("It is constructed with a Delaunay triangulation.")
+    WHEN("It is constructed with a triangulation.")
     {
-      auto constexpr desired_simplices  = static_cast<Int_precision>(640);
-      auto constexpr desired_timeslices = static_cast<Int_precision>(4);
-      FoliatedTriangulation3 triangulation(desired_simplices,
-                                           desired_timeslices);
-      Geometry3              geometry(triangulation);
+      auto constexpr desired_simplices  = 640;
+      auto constexpr desired_timeslices = 4;
+      FoliatedTriangulation_3 const triangulation(desired_simplices,
+                                                  desired_timeslices);
+      Geometry_3              geometry(triangulation);
       THEN(
           "The properties of the Delaunay triangulation are saved in geometry "
           "info.")
@@ -154,7 +167,7 @@ SCENARIO("3-Geometry initialization", "[geometry]")
         CHECK(geometry.N1_TL + geometry.N1_SL == geometry.N1);
         CHECK(geometry.N0 ==
               static_cast<Int_precision>(triangulation.number_of_vertices()));
-        print_triangulation(triangulation);
+        triangulation.print();
         triangulation.print_volume_per_timeslice();
       }
     }
